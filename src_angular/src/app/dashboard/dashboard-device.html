@@ -1,0 +1,54 @@
+<style>
+    /* Chrome, Safari, Edge, Opera */
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+<h1 mat-dialog-title>Provision Device</h1>
+<div>
+    <form [formGroup]="frmDevice" class="create-form">
+        <div mat-dialog-content fxLayout="column">
+
+            <mat-form-field appearance="outline">
+                <mat-label>MAC ADDRESS</mat-label>
+                <input matInput disabled formControlName="mac" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>SERIAL</mat-label>
+                <input matInput disabled formControlName="serial" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>TYPE</mat-label>
+                <input matInput disabled formControlName="type" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>MODEL</mat-label>
+                <input matInput disabled formControlName="model" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>NAME</mat-label>
+                <input matInput formControlName="name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>SITE</mat-label>
+                <mat-select formControlName="site_name" required>
+                    <mat-option *ngFor="let site of data.sites " [value]="site.name">
+                        {{site.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions style="justify-content: space-around;" fxLayout="row">
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="accent" cdkFocusInitial (click)="confirm()" [disabled]="frmDevice.invalid">Update</button>
+</div>

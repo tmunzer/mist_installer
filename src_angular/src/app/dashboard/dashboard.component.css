@@ -96,7 +96,7 @@ table {
 /* Column Widths */
 
 .mat-column-action {
-    width: 300px !important;
+    width: 150px !important;
 }
 
 .edit {

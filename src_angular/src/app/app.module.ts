@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -32,10 +33,9 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { TwoFactorDialog } from './login/login-2FA';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { QrCodeDialog } from './dashboard/dashboard-qrcode';
-import { DeleteDialog } from './dashboard/dashboard-delete';
-import { PskDialog } from './dashboard/dashboard-psk';
-import { EmailDialog } from './dashboard/dashboard-email';
+import { ClaimDialog } from './dashboard/dashboard-claim';
+import { UnclaimDialog } from './dashboard/dashboard-unclaim';
+import { DeviceDialog } from './dashboard/dashboard-device';
 import { ErrorDialog } from './dashboard/dashboard-error';
 import { WarningDialog } from './dashboard/dashboard-warning';
 
@@ -43,7 +43,7 @@ import { WarningDialog } from './dashboard/dashboard-warning';
   declarations: [
     AppComponent,
     LoginComponent, TwoFactorDialog,
-    DashboardComponent, QrCodeDialog, DeleteDialog, PskDialog, EmailDialog, ErrorDialog, WarningDialog
+    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog
   ],
   imports: [
     BrowserModule,
@@ -53,6 +53,7 @@ import { WarningDialog } from './dashboard/dashboard-warning';
     FlexLayoutModule,
     HttpClientModule,
     MatButtonModule,
+    MatChipsModule,
     MatSelectModule,
     MatInputModule,
     MatStepperModule,

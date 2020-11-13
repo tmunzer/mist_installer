@@ -6,10 +6,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { merge, Observable, of as observableOf } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 
-import { QrCodeDialog } from './dashboard-qrcode';
-import { DeleteDialog } from './dashboard-delete';
-import { PskDialog } from './dashboard-psk';
-import { EmailDialog } from './dashboard-email';
+import { ClaimDialog } from './dashboard-claim';
+import { UnclaimDialog } from './dashboard-unclaim';
+import { DeviceDialog } from './dashboard-device';
 import { ErrorDialog } from './dashboard-error';
 
 
@@ -17,30 +16,27 @@ import { ConnectorService } from '../connector.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { WarningDialog } from './dashboard-warning';
+import { ThrowStmt } from '@angular/compiler';
 
-export interface PskElement {
-  id: string;
+export interface DeviceElement {
+  mac: string;
+  model: string;
+  serial: string;
+  connected: boolean;
+  type: string;  
+  deviceprofile_name: string;
+  height: Int16Array;
+  map_id: string;
   name: string;
-  ssid: string;
-  vlan_id: number;
-  created_by: string;
-  created_time: number;
-  modified_time: number;
-  passphrase: string;
-  user_email: string;
+  orientation: Int16Array;
+  site_id: string;
+  site_name: string;
+  x:Int16Array;
+  y: Int16Array;
 }
 
-export interface VlanCheckElement {
-  wlan_id: string,
-  reason: string,
-  vlan_id: number,
-  scope_name: string,
-  scope_id: string,
-  code: string
-}
-
-export interface MistPsks {
-  results: PskElement[];
+export interface MistDevices {
+  results: DeviceElement[];
   total: number;
   limiit: number;
   page: number;
@@ -49,10 +45,10 @@ export interface MistPsks {
 export class MistHttpDatabase {
   constructor(private _httpClient: HttpClient) { }
 
-  loadPsks(body: {}, pageIndex: number, pageSize: number): Observable<MistPsks> {
+  loadDevices(body: {}, pageIndex: number, pageSize: number): Observable<MistDevices> {
     body["page"] = pageIndex;
     body["limit"] = pageSize;
-    return this._httpClient.post<MistPsks>('/api/psks/', body);
+    return this._httpClient.post<MistDevices>('/api/devices/', body);
   }
 }
 
@@ -73,28 +69,26 @@ export class DashboardComponent implements OnInit {
   search = "";
   orgs = [];
   sites = [];
-  wlans = [];
   org_id: string = "";
   site_id: string = "";
-  sitegroups_ids: string[] = [];
-  ssid: string = "";
+  device_type: string = ""
   me: string = "";
 
   sitesDisabled: boolean = true;
-  wlansDisabled: boolean = true;
-  createDisabled: boolean = true;
+  claimDisabled: boolean = false;
+  claimButton: string= "To Org";
 
   topBarLoading = false;
   loading = false;
 
   isRateLimitReached = false;
-  pskDatabase: MistHttpDatabase | null;
-  filteredPskDatase: MatTableDataSource<PskElement> | null;
-  psks: PskElement[] = []
+  devicesDatabase: MistHttpDatabase | null;
+  filteredDevicesDatase: MatTableDataSource<DeviceElement> | null;
+  devices: DeviceElement[] = []
 
   filters_enabled: boolean = false
   resultsLength = 0;
-  displayedColumns: string[] = ['name', 'user_email', 'ssid', 'vlan_id', 'created_by', 'created_time', 'modified_time', 'action'];
+  displayedColumns: string[] = ['name', 'type', 'model', 'serial', 'mac', 'connected', 'site_name', 'action'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -126,21 +120,21 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  getPsks() {
+  getDevices() {
     var body = null
     if (this.site_id == "org") {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, ssid: this.ssid, full: this.filters_enabled }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: this.filters_enabled, type: this.device_type }
     } else if (this.site_id) {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, site_id: this.site_id, ssid: this.ssid, full: this.filters_enabled }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: this.site_id, full: this.filters_enabled, type: this.device_type }
     }
     if (body) {
 
       if (this.filters_enabled) {
         this.loading = true;
-        this._http.post<PskElement[]>('/api/psks/', body).subscribe({
+        this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
           next: data => {
-            this.filteredPskDatase = new MatTableDataSource(data["results"]);
-            this.filteredPskDatase.paginator = this.paginator;
+            this.filteredDevicesDatase = new MatTableDataSource(data["results"]);
+            this.filteredDevicesDatase.paginator = this.paginator;
             this.loading = false;
           },
           error: error => {
@@ -151,13 +145,13 @@ export class DashboardComponent implements OnInit {
         })
 
       } else {
-        this.pskDatabase = new MistHttpDatabase(this._http);
+        this.devicesDatabase = new MistHttpDatabase(this._http);
         merge(this.paginator.page, this.paginator.pageSize)
           .pipe(
             startWith({}),
             switchMap(() => {
               this.loading = true;
-              return this.pskDatabase!.loadPsks(body, this.paginator.pageIndex, this.paginator.pageSize);
+              return this.devicesDatabase!.loadDevices(body, this.paginator.pageIndex, this.paginator.pageSize);
             }),
             map(data => {
               // Flip flag to show that loading has finished.
@@ -171,27 +165,9 @@ export class DashboardComponent implements OnInit {
               this.isRateLimitReached = true;
               return observableOf([]);
             })
-          ).subscribe(data => this.psks = data);
+          ).subscribe(data => this.devices = data);
       }
     }
-  }
-
-
-  parseSites(data) {
-    if (data.sites.length > 0) {
-      this.sites = this.sortList(data.sites, "name");
-    }
-    this.sitesDisabled = false;
-    this.topBarLoading = false;
-  }
-  parseWlans(data) {
-    this.wlans = []
-    if (data.wlans.length > 0) {
-      this.wlans = this.sortList(data.wlans, "ssid");
-      this.getPsks()
-    }
-    this.wlansDisabled = false;
-    this.topBarLoading = false;
   }
 
   changeOrg() {
@@ -208,49 +184,21 @@ export class DashboardComponent implements OnInit {
       }
     })
   }
-  changeSite() {
-    this.topBarLoading = true;
-    var body = null
-    this.createDisabled = false;
-    this.sitegroups_ids = [];
-    if (this.site_id == "org") {
-      body = {
-        host: this.host,
-        cookies: this.cookies,
-        headers: this.headers,
-        org_id: this.org_id
-      }
-    } else if (this.site_id) {
-      this.sites.forEach(site => {
-        if (site.id == this.site_id) {
-          this.sitegroups_ids = site.sitegroups_ids;
-        }
-      })
-      body = {
-        host: this.host,
-        cookies: this.cookies,
-        headers: this.headers,
-        site_id: this.site_id,
-        sitegroups_ids: this.sitegroups_ids,
-        org_id: this.org_id
-      }
+  parseSites(data) {
+    if (data.sites.length > 0) {
+      this.sites = this.sortList(data.sites, "name");
     }
-    if (body) {
-      this._http.post<any>('/api/wlans/', body).subscribe({
-        next: data => this.parseWlans(data),
-        error: error => {
-          var message: string = "There was an error... "
-          if ("error" in error) { message += error["error"]["message"] }
-          this.topBarLoading = false;
-          this.openError(message)
-        }
-      })
-    }
-  }
-  changeWlan() {
-    this.getPsks()
+    this.sitesDisabled = false;
+    this.topBarLoading = false;
+    this.getDevices();
+    this.site_id="org";
+    this.claimDisabled = false;
   }
 
+  changeSite() {
+    this.claimButton = "To Site";
+    this.getDevices();
+  }
 
   // COMMON
   sortList(data, attribute) {
@@ -266,12 +214,15 @@ export class DashboardComponent implements OnInit {
       return 0;
     })
   }
+  applySiteFilter(){
+    
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.filteredPskDatase.filter = filterValue.trim().toLowerCase();
+    this.filteredDevicesDatase.filter = filterValue.trim().toLowerCase();
 
-    if (this.filteredPskDatase.paginator) {
-      this.filteredPskDatase.paginator.firstPage();
+    if (this.filteredDevicesDatase.paginator) {
+      this.filteredDevicesDatase.paginator.firstPage();
     }
   }
 
@@ -283,79 +234,15 @@ export class DashboardComponent implements OnInit {
       data: message
     });
   }
-  // Warning VLAN
-  checkVlan(data): void {
-    if ("vlan_check" in data && data["vlan_check"].length > 0) {
-      var bigWarning: boolean = false
-      if (data["vlan_check"].length == 1) {
-        var message = "VLAN misconfiguration has been detected for this SSID. This may prevent the user to connect."
-      } else {
-        var message = "VLAN misconfiguration has been detected in " + data["vlan_check"].length + " templates. This may prevent the user to connect."
-      }
-      data["vlan_check"].forEach(element => {
-        console.log(element["code"])
-        if (["untagged", "vlan_pooling_disabled", "static_vlan"].indexOf(element["code"]) >= 0) {
-          bigWarning = true
-          console.log(bigWarning)
-        }
-      })
-      this.openWarningVlan(message, data["vlan_check"], bigWarning)
-    }
-  }
-
-  openWarningVlan(message: string, vlan_check: VlanCheckElement[], bigWarning: boolean): void {
-    const dialogRef = this._dialog.open(WarningDialog, {
-      data: { text: message, vlan_check: vlan_check, bigWarning: bigWarning },
-      height : 'auto',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this._http.post<any>('/api/vlans/', { host: this.host, cookies: this.cookies, headers: this.headers, vlan_check: vlan_check }).subscribe({
-          next: data => {
-            if (data["error"].length == 0) {
-              this.openSnackBar("VLAN configuration successfully updated", "Done")
-            } else {
-
-            }
-
-          },
-          error: error => {
-            var message: string = "Unable to update VLAN configuration... "
-            if ("error" in error) {
-              message += error["error"]["message"]
-            }
-            this.openError(message)
-          }
-        })
-      }
-    })
-  }
-
-  // QRCODE DIALOG
-  openQrcode(psk: PskElement): void {
-    const dialogRef = this._dialog.open(QrCodeDialog, {
-      data: { ssid: psk.ssid, passphrase: psk.passphrase }
-    });
-  }
 
 
 
 
   // CREATE DIALOG
-  openCreate(): void {
-    var newPsk: PskElement = {
-      id: null,
-      name: "",
-      vlan_id: null,
-      ssid: this.ssid,
-      passphrase: "",
-      created_by: this.me,
-      created_time: null,
-      modified_time: null,
-      user_email: null
-    };
-    const dialogRef = this._dialog.open(PskDialog, {
-      data: { wlans: this.wlans, psk: newPsk, editing: false }
+  openClaim(): void {
+    var claimCodes: string[] = [];
+    const dialogRef = this._dialog.open(ClaimDialog, {
+      data: { claimCodes: claimCodes, editing: false }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -366,13 +253,7 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             org_id: this.org_id,
-            user_email: result.user_email,
-            name: result.name,
-            passphrase: result.psk,
-            ssid: result.ssid,
-            vlan_id: result.vlan_id,
-            created_by: this.me,
-            renewable: result.renewable
+            claimCodes: result
           }
         } else if (this.site_id) {
           body = {
@@ -380,23 +261,23 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             site_id: this.site_id,
-            user_email: result.user_email,
-            name: result.name,
-            passphrase: result.psk,
-            ssid: result.ssid,
-            vlan_id: result.vlan_id,
-            created_by: this.me,
-            renewable: result.renewable
+            claimCodes: result
           }
         }
-        this._http.post<any>('/api/psks/create/', body).subscribe({
+        this._http.post<any>('/api/devices/claim/', body).subscribe({
           next: data => {
-            this.getPsks()
-            this.openSnackBar("PSK " + result.name + " successfully created", "Done")
-            this.checkVlan(data)
+            var text: string= "";
+            this.getDevices()
+            if (Array(result).length == 1){
+              text = "1 device";
+           } else {
+             text = Array(result).length + " devices"
+           }
+          
+            this.openSnackBar(text + " successfully claimed", "Done")
           },
           error: error => {
-            var message: string = "Unable to create PSK " + result.name + "... "
+            var message: string = "Unable to create claim the devices... "
             if ("error" in error) { message += error["error"]["message"] }
             this.openError(message)
           }
@@ -404,10 +285,10 @@ export class DashboardComponent implements OnInit {
       }
     })
   }
-  // EDIT PSK
-  openEdit(psk: PskElement): void {
-    const dialogRef = this._dialog.open(PskDialog, {
-      data: { wlans: this.wlans, psk: psk, editing: true }
+  // EDIT DEVICE
+  openEdit(device: DeviceElement): void {
+    const dialogRef = this._dialog.open(DeviceDialog, {
+      data: { sites: this.sites, device: device, editing: true }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -418,14 +299,7 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             org_id: this.org_id,
-            id: result.id,
-            user_email: result.user_email,
-            name: result.name,
-            passphrase: result.psk,
-            ssid: result.ssid,
-            vlan_id: result.vlan_id,
-            created_by: this.me,
-            renewable: result.renewable
+            device: result.device
           }
         } else if (this.site_id) {
           body = {
@@ -433,24 +307,16 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             site_id: this.site_id,
-            id: result.id,
-            user_email: result.user_email,
-            name: result.name,
-            passphrase: result.psk,
-            ssid: result.ssid,
-            vlan_id: result.vlan_id,
-            created_by: this.me,
-            renewable: result.renewable
+            device: result.device
           }
         }
-        this._http.post<any>('/api/psks/create/', body).subscribe({
+        this._http.post<any>('/api/devices/provision/', body).subscribe({
           next: data => {
-            this.getPsks()
-            this.openSnackBar("PSK " + result.name + " successfully updated", "Done")
-            this.checkVlan(data)
+            this.getDevices()
+            this.openSnackBar("Device " + result.mac + " successfully provisioned", "Done")
           },
           error: error => {
-            var message: string = "Unable to save changes to PSK " + psk.name + "... "
+            var message: string = "Unable to save changes to Device " + device.mac + "... "
             if ("error" in error) { message += error["error"]["message"] }
             this.openError(message)
           }
@@ -460,9 +326,9 @@ export class DashboardComponent implements OnInit {
   }
 
   // DELETE DIALOG
-  openDelete(psk: PskElement): void {
-    const dialogRef = this._dialog.open(DeleteDialog, {
-      data: psk
+  openDelete(device: DeviceElement): void {
+    const dialogRef = this._dialog.open(UnclaimDialog, {
+      data: device
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -473,7 +339,7 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             org_id: this.org_id,
-            psk_id: psk.id
+            device_mac: device.mac
           }
         } else if (this.site_id) {
           body = {
@@ -481,37 +347,16 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             site_id: this.site_id,
-            psk_id: psk.id
+            device_mac: device.mac
           }
         }
-        this._http.post<any>('/api/psks/delete/', body).subscribe({
+        this._http.post<any>('/api/devices/unclaim/', body).subscribe({
           next: data => {
-            this.getPsks()
-            this.openSnackBar("PSK " + psk.name + " successfully deleted", "Done")
+            this.getDevices()
+            this.openSnackBar("Device " + device.mac + " successfully unclaimed", "Done")
           },
           error: error => {
-            var message: string = "Unable to delete the PSK" + psk.name + "... "
-            if ("error" in error) { message += error["error"]["message"] }
-            this.openError(message)
-          }
-        })
-      }
-    });
-  }
-  // EMAIL DIALOG
-  openEmail(psk: PskElement): void {
-    const dialogRef = this._dialog.open(EmailDialog, {
-      data: psk
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this._http.post<any>('/api/psks/email/', { name: result.name, user_email: result.user_email, psk: psk.passphrase, ssid: psk.ssid }).subscribe({
-          next: data => {
-            this.getPsks()
-            this.openSnackBar("Email sent to" + psk.user_email, "Done")
-          },
-          error: error => {
-            var message: string = "Unable to send the email to " + result.user_email + "... "
+            var message: string = "Unable to unclaim the device " + device.mac + "... "
             if ("error" in error) { message += error["error"]["message"] }
             this.openError(message)
           }
