@@ -14,23 +14,23 @@ export class ClaimDialog {
         public dialogRef: MatDialogRef<ClaimDialog>) { }
     claimCodes: string[] = [];
     separatorKeysCodes: number[] = [ENTER, COMMA, SPACE, SEMICOLON];
-    claimButtonDisabled: boolean = false;
+    claimButtonDisabled: boolean = true;
     failed: string[] = [];
     failed_string: string = "";
 
-    add(event: MatChipInputEvent): void {
+    add(event: MatChipInputEvent): void {        
         const input = event.input;
         const value = event.value;
         this.failed = [];
 
         var regex = /^[0-9a-z]{5}-?[0-9a-z]{5}-?[0-9a-z]{5}$/i;
-        value.split(" ").forEach(element => {
+        value.split(/[\s,; ]+/).forEach(element => {
             var claim = element.replace(";", "").replace(",", "").trim();
             if (claim.match(regex)) {
                 if (this.claimCodes.indexOf(claim) < 0) {
                     this.claimCodes.push(claim);
                 }
-            } else {
+            } else if (claim.length > 0){                
                 this.failed.push(claim)
             }
         })
@@ -39,8 +39,7 @@ export class ClaimDialog {
         if (input) {
             input.value = this.failed.join(" ");
         }
-
-        if (this.claimCodes && this.failed.length == 0) {
+        if (this.claimCodes.length > 0 && this.failed.length == 0) {
             this.claimButtonDisabled = false;
         } else {
             this.claimButtonDisabled = true;
@@ -57,9 +56,7 @@ export class ClaimDialog {
     }
 
     confirm(): void {
-        var claimCodes: string[];
-        console.log(claimCodes);
-        this.dialogRef.close(claimCodes);
+        this.dialogRef.close(this.claimCodes);
     }
     cancel(): void {
         this.dialogRef.close();

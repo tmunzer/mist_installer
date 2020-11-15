@@ -264,7 +264,7 @@ export class DashboardComponent implements OnInit {
             claimCodes: result
           }
         }
-        this._http.post<any>('/api/devices/claim/', body).subscribe({
+        this._http.post<any>('/api/claim/', body).subscribe({
           next: data => {
             var text: string= "";
             this.getDevices()
