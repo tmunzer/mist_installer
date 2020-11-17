@@ -8,7 +8,6 @@ import json
 import time
 import logging
 
-from .lib.__req import Req
 from .lib.devices import Devices
 from .lib.sites import Sites
 from .lib.maps import Maps
