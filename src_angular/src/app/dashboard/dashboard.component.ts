@@ -245,15 +245,17 @@ export class DashboardComponent implements OnInit {
       data: { claimCodes: claimCodes, editing: false }
     })
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      console.log(this.site_id)
       if (result) {
-        var body = null;
+        var body = null;    
         if (this.site_id == "org") {
           body = {
             host: this.host,
             cookies: this.cookies,
             headers: this.headers,
             org_id: this.org_id,
-            claimCodes: result
+            claim_codes: result
           }
         } else if (this.site_id) {
           body = {
@@ -261,10 +263,10 @@ export class DashboardComponent implements OnInit {
             cookies: this.cookies,
             headers: this.headers,
             site_id: this.site_id,
-            claimCodes: result
+            claim_codes: result
           }
         }
-        this._http.post<any>('/api/claim/', body).subscribe({
+        this._http.post<any>('/api/devices/claim/', body).subscribe({
           next: data => {
             var text: string= "";
             this.getDevices()
