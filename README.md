@@ -6,8 +6,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-<img src="https://github.com/tmunzer/mist_psk_stateless_web_ui/blob/master/._readme/main.png?raw=true"/>
-
 ## Features
 - Retrieve and display Org and Site newly claimed devices 
 - Claim new devices
