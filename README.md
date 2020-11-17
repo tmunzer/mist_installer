@@ -12,8 +12,8 @@ This program is free software: you can redistribute it and/or modify it under th
 - Edit newly claimed devices settings
 - Assign newly claimed devices to Site/Floorplan
 
-<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/master/._readme/claim.png" width="30%" />
-<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/master/._readme/edit.png?" width="30%" />
+<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/main/.readme/claim.png" width="30%" />
+<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/main/._readme/edit.png?" width="30%" />
 
 
 ## Installation
