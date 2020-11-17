@@ -58,8 +58,8 @@ ___CSS_LOADER_EXPORT___.push([module.i, "/* Colors for the ripple elements.*/\n/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/tmunzer/4_dev/Mist/mist_psk_stateless_ui/src_angular/src/styles.scss */"+EN/");
-module.exports = __webpack_require__(/*! /Users/tmunzer/4_dev/Mist/mist_psk_stateless_ui/src_angular/src/styles.css */"OmL/");
+__webpack_require__(/*! /Users/tmunzer/4_dev/Mist/mist_claim_web_ui/src_angular/src/styles.scss */"+EN/");
+module.exports = __webpack_require__(/*! /Users/tmunzer/4_dev/Mist/mist_claim_web_ui/src_angular/src/styles.css */"OmL/");
 
 
 /***/ }),

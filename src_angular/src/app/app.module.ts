@@ -25,7 +25,6 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { QRCodeModule } from 'angularx-qrcode';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -66,7 +65,6 @@ import { ClaimDetailsDialog } from './dashboard/dashboard-claim-details';
     MatProgressBarModule,
     MatTooltipModule,
     MatPaginatorModule,
-    QRCodeModule,
     MatDialogModule,
     FormsModule,
     MatIconModule,
