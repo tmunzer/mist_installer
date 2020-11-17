@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 
@@ -38,12 +37,13 @@ import { UnclaimDialog } from './dashboard/dashboard-unclaim';
 import { DeviceDialog } from './dashboard/dashboard-device';
 import { ErrorDialog } from './dashboard/dashboard-error';
 import { WarningDialog } from './dashboard/dashboard-warning';
+import { ClaimDetailsDialog } from './dashboard/dashboard-claim-details';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent, TwoFactorDialog,
-    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog
+    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog
   ],
   imports: [
     BrowserModule,

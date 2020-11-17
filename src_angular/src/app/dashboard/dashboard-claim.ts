@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { COMMA, ENTER, SPACE, SEMICOLON } from '@angular/cdk/keycodes';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
+import { ErrorDialog } from './dashboard-error';
+import { ClaimDetailsDialog } from './dashboard-claim-details'
 
 export interface ClaimCodeElement {
     code: string;
@@ -8,7 +10,7 @@ export interface ClaimCodeElement {
     valid: boolean;
     success: boolean;
     reason: string;
-    readonly: boolean;
+    processed: boolean;
 }
 
 @Component({
@@ -17,23 +19,26 @@ export interface ClaimCodeElement {
 })
 export class ClaimDialog {
     constructor(
-        public dialogRef: MatDialogRef<ClaimDialog>) { }
+        public dialogRef: MatDialogRef<ClaimDialog>, private _http: HttpClient, public _dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data) { }
     claimCodes: ClaimCodeElement[] = [];
-    separatorKeysCodes: number[] = [ENTER, COMMA, SPACE, SEMICOLON];
     claimButtonDisabled: boolean = true;
-    inputClaimCodes: string = "";    
+    inputClaimCodes: string = "";
+    body = this.data.body;
+    isDone = false;
+    claimResult = {};
+    isWorking = false;
 
     add(): void {
-        var regex = /^[0-9a-z]{5}-?[0-9a-z]{5}-?[0-9a-z]{5}$/i;
+        var regex = /^[0-9a-zA-Z]{5}-?[0-9a-zA-Z]{5}-?[0-9a-zA-Z]{5}$/i;
         this.inputClaimCodes.split(/[\s,; ]+/).forEach(element => {
             var claim = element.replace(";", "").replace(",", "").trim().toUpperCase();
             if (claim.length > 0) {
-                var newClaim = { code: claim, success: null, reason: null, duplicated: false, valid: false, readonly:true };
-                if (claim.match(regex)) {
+                var newClaim = { code: claim, success: null, reason: null, duplicated: false, valid: false, processed: false };
+                if (newClaim.code.match(regex)) {
                     newClaim.valid = true;
                 }
                 this.claimCodes.forEach(element => {
-                    if (element.code == newClaim.code){
+                    if (element.code == newClaim.code) {
                         element.duplicated = true;
                         newClaim.duplicated = true;
                     }
@@ -71,8 +76,8 @@ export class ClaimDialog {
         }
     }
 
-    remove(claimCode: ClaimCodeElement): void {    
-        var duplicated_codes = []    ;
+    remove(claimCode: ClaimCodeElement): void {
+        var duplicated_codes = [];
         var index = -1;
         // remove the claim code
         index = this.claimCodes.indexOf(claimCode);
@@ -80,12 +85,12 @@ export class ClaimDialog {
             this.claimCodes.splice(index, 1);
         }
         // if the removed claim code has the duplicated flag
-        if (claimCode.duplicated){
+        if (claimCode.duplicated) {
             // find other same codes
             this.claimCodes.forEach(element => {
                 if (element.code == claimCode.code) {
                     duplicated_codes.push(element);
-                }        
+                }
             })
             // if only one other same code, remove the duplicated flash
             if (duplicated_codes.length == 1) {
@@ -97,16 +102,70 @@ export class ClaimDialog {
         this.check_issues()
     }
 
+    // CLAIM NEW CODES
     confirm(): void {
-        var claimCodesArray = [];
+        this.isWorking = true;
+        this.isDone = true;
+        // Add claim codes to request body
+        this.body.claim_codes = [];
         this.claimCodes.forEach(element => {
-            claimCodesArray.push(element.code)
+            this.body.claim_codes.push(element.code)
         })
-        this.dialogRef.close(claimCodesArray);
+        // Send request to server
+        this._http.post<any>('/api/devices/claim/', this.body).subscribe({
+            next: data => {
+                // retrieve result data
+                this.claimResult = data.results;
+                this.claimCodes.forEach(element => {
+                    element.processed = true;
+                    var index = -1;
+                    // if code added to account
+                    if (this.claimResult["added"].indexOf(element.code) >= 0) {
+                        element.success = true;
+                    // if error when adding the code
+                    } else if (this.claimResult["error"].indexOf(element.code) >= 0) {
+                        index = this.claimResult["error"].indexOf(element.code);
+                        element.success = false;
+                        element.reason = this.claimResult["reason"][index]
+                    // if code already claimed somewhere
+                    } else if (this.claimResult["duplicated"].indexOf(element.code) >= 0) {
+                        element.success = false;
+                        element.reason = "Already Claimed"
+                    }
+                })
+                this.isWorking = false;
+            },
+            error: error => {
+                var message: string = "Unable to create claim the devices... "
+                if ("error" in error) { message += error["error"]["message"] }
+                this.openError(message)
+                this.isWorking = false;
+            }
+        })
     }
+
+
+    // EXIT
     cancel(): void {
         this.dialogRef.close();
     }
+// DIALOG BOXES
+    // DETAILS
+    details(): void {
+        console.log(this.claimResult);
+        const dialogRef = this._dialog.open(ClaimDetailsDialog, {
+            data: this.claimResult
+        })
+
+    }
+    // ERROR
+    openError(message: string): void {
+        const dialogRef = this._dialog.open(ErrorDialog, {
+            data: message
+        });
+    }
+
+
 }
 
 

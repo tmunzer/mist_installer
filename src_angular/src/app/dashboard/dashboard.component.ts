@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit {
   me: string = "";
 
   sitesDisabled: boolean = true;
-  claimDisabled: boolean = false;
+  claimDisabled: boolean = true;
   claimButton: string= "To Org";
 
   topBarLoading = false;
@@ -240,51 +240,32 @@ export class DashboardComponent implements OnInit {
 
   // CREATE DIALOG
   openClaim(): void {
-    var claimCodes: string[] = [];
+    var body = null;    
+    if (this.site_id == "org") {
+      body = {
+        host: this.host,
+        cookies: this.cookies,
+        headers: this.headers,
+        org_id: this.org_id,
+        claim_codes: null
+      }
+    } else if (this.site_id) {
+      body = {
+        host: this.host,
+        cookies: this.cookies,
+        headers: this.headers,
+        site_id: this.site_id,
+        claim_codes: null
+      }
+    }
+    
     const dialogRef = this._dialog.open(ClaimDialog, {
-      data: { claimCodes: claimCodes, editing: false }
+      data: { body: body }
     })
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
       console.log(this.site_id)
-      if (result) {
-        var body = null;    
-        if (this.site_id == "org") {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            org_id: this.org_id,
-            claim_codes: result
-          }
-        } else if (this.site_id) {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            site_id: this.site_id,
-            claim_codes: result
-          }
-        }
-        this._http.post<any>('/api/devices/claim/', body).subscribe({
-          next: data => {
-            var text: string= "";
-            this.getDevices()
-            if (Array(result).length == 1){
-              text = "1 device";
-           } else {
-             text = Array(result).length + " devices"
-           }
-          
-            this.openSnackBar(text + " successfully claimed", "Done")
-          },
-          error: error => {
-            var message: string = "Unable to create claim the devices... "
-            if ("error" in error) { message += error["error"]["message"] }
-            this.openError(message)
-          }
-        })
-      }
+      this.getDevices()
     })
   }
   // EDIT DEVICE
