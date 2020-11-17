@@ -11,6 +11,7 @@ import logging
 from .lib.__req import Req
 from .lib.devices import Devices
 from .lib.sites import Sites
+from .lib.maps import Maps
 
 # try:
 #     from .config import smtp_config
@@ -92,6 +93,20 @@ def sites(request):
         return JsonResponse(status=response["status"], data=response["data"])
     else:
         return Http404
+
+
+##########
+# Maps
+
+
+@csrf_exempt
+def maps(request):
+    if request.method == 'POST':
+        response = Maps().pull(request.body)
+        return JsonResponse(status=response["status"], data=response["data"])
+    else:
+        return Http404
+
 
 ##########
 # LOGIN

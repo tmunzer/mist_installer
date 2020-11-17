@@ -23,16 +23,18 @@ export interface DeviceElement {
   model: string;
   serial: string;
   connected: boolean;
-  type: string;  
+  type: string;
   deviceprofile_name: string;
   height: Int16Array;
   map_id: string;
+  map_name: string;
   name: string;
   orientation: Int16Array;
   site_id: string;
   site_name: string;
-  x:Int16Array;
+  x: Int16Array;
   y: Int16Array;
+
 }
 
 export interface MistDevices {
@@ -69,14 +71,17 @@ export class DashboardComponent implements OnInit {
   search = "";
   orgs = [];
   sites = [];
+  maps = [];
   org_id: string = "";
-  site_id: string = "";
+  site_name: string = "__any__";
+  map_id: string = "__any__";
   device_type: string = ""
   me: string = "";
 
   sitesDisabled: boolean = true;
+  mapsDisabled: boolean = true;
   claimDisabled: boolean = true;
-  claimButton: string= "To Org";
+  claimButton: string = "To Org";
 
   topBarLoading = false;
   loading = false;
@@ -88,7 +93,7 @@ export class DashboardComponent implements OnInit {
 
   filters_enabled: boolean = false
   resultsLength = 0;
-  displayedColumns: string[] = ['name', 'type', 'model', 'serial', 'mac', 'connected', 'site_name', 'action'];
+  displayedColumns: string[] = ['mac', 'name', 'type', 'model', 'serial',  'connected', 'site_name'];//, 'action'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -122,10 +127,10 @@ export class DashboardComponent implements OnInit {
 
   getDevices() {
     var body = null
-    if (this.site_id == "org") {
+    if (this.site_name == "__any__") {
       body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: this.filters_enabled, type: this.device_type }
-    } else if (this.site_id) {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: this.site_id, full: this.filters_enabled, type: this.device_type }
+    } else if (this.site_name) {
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: this.filters_enabled, type: this.device_type }
     }
     if (body) {
 
@@ -186,18 +191,53 @@ export class DashboardComponent implements OnInit {
   }
   parseSites(data) {
     if (data.sites.length > 0) {
+      this.sitesDisabled = false;
       this.sites = this.sortList(data.sites, "name");
     }
-    this.sitesDisabled = false;
     this.topBarLoading = false;
     this.getDevices();
-    this.site_id="org";
+    this.site_name = "__any__";
     this.claimDisabled = false;
   }
 
   changeSite() {
-    this.claimButton = "To Site";
+    if (this.site_name == "__any__") {
+      this.claimButton = "To Org";
+    } else {
+      this.claimButton = "To Site";
+    }
+    this.topBarLoading = true;
+    this.mapsDisabled = true;
+    this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name }).subscribe({
+      next: data => this.parseMap(data),
+      error: error => {
+        var message: string = "There was an error... "
+        if ("error" in error) {
+          message += error["error"]["message"]
+        }
+        this.topBarLoading = false;
+        this.openError(message)
+      }
+    })
+  }
+  parseMap(data) {
+    if (data.maps.length > 0) {
+      this.mapsDisabled = false;
+      this.maps = this.sortList(data.maps, "name");
+    }
+    this.topBarLoading = false;
     this.getDevices();
+    this.map_id = "__any__";
+  }
+
+
+  changeMap() {
+    if (this.map_id == "__any__") {
+      this.claimButton = "To Site";
+    } else {
+      this.claimButton = "To Map";
+    }
+    this.getDevices()
   }
 
   // COMMON
@@ -214,9 +254,7 @@ export class DashboardComponent implements OnInit {
       return 0;
     })
   }
-  applySiteFilter(){
-    
-  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.filteredDevicesDatase.filter = filterValue.trim().toLowerCase();
@@ -240,58 +278,49 @@ export class DashboardComponent implements OnInit {
 
   // CREATE DIALOG
   openClaim(): void {
-    var body = null;    
-    if (this.site_id == "org") {
-      body = {
-        host: this.host,
-        cookies: this.cookies,
-        headers: this.headers,
-        org_id: this.org_id,
-        claim_codes: null
-      }
-    } else if (this.site_id) {
-      body = {
-        host: this.host,
-        cookies: this.cookies,
-        headers: this.headers,
-        site_id: this.site_id,
-        claim_codes: null
-      }
+    var body = {
+      host: this.host,
+      cookies: this.cookies,
+      headers: this.headers,
+      org_id: this.org_id,
+      site_name: this.site_name,
+      map_id: this.map_id,
+      claim_codes: null
     }
-    
+
     const dialogRef = this._dialog.open(ClaimDialog, {
       data: { body: body }
     })
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
-      console.log(this.site_id)
+      console.log(this.site_name)
       this.getDevices()
     })
   }
   // EDIT DEVICE
   openEdit(device: DeviceElement): void {
+    console.log(device)
+    var body = {
+      host: this.host,
+      cookies: this.cookies,
+      headers: this.headers,
+      org_id: this.org_id,
+      site_name: this.site_name,
+      map_id: this.map_id
+    }
     const dialogRef = this._dialog.open(DeviceDialog, {
-      data: { sites: this.sites, device: device, editing: true }
+      data: { sites: this.sites, body: body, device: device, editing: true }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        var body = null;
-        if (this.site_id == "org") {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            org_id: this.org_id,
-            device: result.device
-          }
-        } else if (this.site_id) {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            site_id: this.site_id,
-            device: result.device
-          }
+        console.log(result)
+        var body = {
+          host: this.host,
+          cookies: this.cookies,
+          headers: this.headers,
+          org_id: this.org_id,
+          device: result.device,
+          device_mac: result.device_mac
         }
         this._http.post<any>('/api/devices/provision/', body).subscribe({
           next: data => {
@@ -315,23 +344,15 @@ export class DashboardComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        var body = null;
-        if (this.site_id == "org") {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            org_id: this.org_id,
-            device_mac: device.mac
-          }
-        } else if (this.site_id) {
-          body = {
-            host: this.host,
-            cookies: this.cookies,
-            headers: this.headers,
-            site_id: this.site_id,
-            device_mac: device.mac
-          }
+        var body = {
+          host: this.host,
+          cookies: this.cookies,
+          headers: this.headers,
+          org_id: this.org_id,
+          site_name: this.site_name,
+          map_id: this.map_id,
+          device_mac: device.mac
+
         }
         this._http.post<any>('/api/devices/unclaim/', body).subscribe({
           next: data => {

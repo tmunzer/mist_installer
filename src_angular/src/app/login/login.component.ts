@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   cookies = {};
   self = {};
   show_github_fork_me : boolean = false;
-  hostnames_to_show_github_fork_me = ["localhost", "127.0.0.1", "psk.mist-lab.fr"]
+  hostnames_to_show_github_fork_me = ["localhost", "127.0.0.1", "installer.mist-lab.fr"]
   loading: boolean;
   hosts = [
     { value: 'api.mist.com', viewValue: 'US - manage.mist.com' },

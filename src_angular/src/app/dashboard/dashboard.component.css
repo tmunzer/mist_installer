@@ -106,3 +106,8 @@ table {
 .delete {
     background-color: #f44336 !important;
 }
+
+a.mac {
+    color: #6f9d2b !important;
+    cursor: pointer;
+}

@@ -9,5 +9,6 @@ urlpatterns = [
     path('devices/provision/', views.provision_device, name='provision'),
     path('login/', views.login, name='login'),
     path('sites/', views.sites, name='sites'),    
+    path('maps/', views.maps, name='maps'),    
 ]
 
