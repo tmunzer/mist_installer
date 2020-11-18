@@ -21,6 +21,8 @@ export class OrgComponent implements OnInit {
   search = "";
   orgs = [];
   sites = [];
+  role: string = "";
+  org_priv = null;
   org_id: string = "";
   site_name: string = "";
   me: string = "";
@@ -50,13 +52,14 @@ export class OrgComponent implements OnInit {
     this._appService.self.subscribe(self => this.self = self || {})
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this._appService.site_name.subscribe(site_name => this.site_name = site_name)
+    this._appService.role.subscribe(role => this.role = role)
     this.me = this.self["email"] || null
     var tmp_orgs: string[] = []
     if (this.self != {} && this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
         if (element["scope"] == "org") {
           if (tmp_orgs.indexOf(element["org_id"]) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["name"] })
+            this.orgs.push({ id: element["org_id"], name: element["name"], role: element["role"] })
             tmp_orgs.push(element["org_id"])
           }
         } else if (element["scope"] == "site") {
@@ -73,10 +76,12 @@ export class OrgComponent implements OnInit {
     }
   }
   changeOrg() {
+    this.org_id = this.org_priv.id
+    this.role = this.org_priv.role    
     this.topBarLoading = true;
-    this.claimDisabled = false;
+    this.claimDisabled = false;    
     this.sites = [];
-    this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id }).subscribe({
+    this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, role: this.role }).subscribe({
       next: data => this.parseSites(data),
       error: error => {
         var message: string = "There was an error... "
@@ -110,6 +115,7 @@ export class OrgComponent implements OnInit {
     this.gotoDash();
   }
   gotoDash(): void {
+    this._appService.roleSet(this.role)
     this._appService.orgIdSet(this.org_id);
     this._router.navigate(["/dashboard"]);
   }

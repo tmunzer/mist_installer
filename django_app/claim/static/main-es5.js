@@ -1022,7 +1022,7 @@
 
       function OrgComponent_mat_option_7_Template(rf, ctx) {
         if (rf & 1) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-option", 12);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-option", 14);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
 
@@ -1030,55 +1030,89 @@
         }
 
         if (rf & 2) {
-          var org_r4 = ctx.$implicit;
+          var org_r6 = ctx.$implicit;
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", org_r4.id);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", org_r6);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", org_r4.name, " ");
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", org_r6.name, " ");
         }
       }
 
       function OrgComponent_div_13_Template(rf, ctx) {
         if (rf & 1) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 13);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 15);
         }
       }
 
       function OrgComponent_mat_progress_bar_14_Template(rf, ctx) {
         if (rf & 1) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "mat-progress-bar", 14);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "mat-progress-bar", 16);
         }
       }
 
       function OrgComponent_mat_card_16_Template(rf, ctx) {
         if (rf & 1) {
-          var _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 17);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 15);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 18);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function OrgComponent_mat_card_16_Template_mat_card_click_0_listener() {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r7);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " Please Select an Organization ");
 
-            var site_r5 = ctx.$implicit;
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-            var ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        }
+      }
 
-            return ctx_r6.setSite(site_r5);
+      function OrgComponent_mat_card_17_Template(rf, ctx) {
+        if (rf & 1) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 19);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 20);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " You don't have access to any Site in this Organization. Please chose another Organization. ");
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div", 21);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, " Only the Sites Installers with the \"Installer\" authorizations are listed. ");
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        }
+      }
+
+      function OrgComponent_mat_card_19_Template(rf, ctx) {
+        if (rf & 1) {
+          var _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 22);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function OrgComponent_mat_card_19_Template_mat_card_click_0_listener() {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r9);
+
+            var site_r7 = ctx.$implicit;
+
+            var ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+
+            return ctx_r8.setSite(site_r7);
           });
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div");
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "mat-card-title", 16);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "mat-card-title", 23);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-card-subtitle", 16);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-card-subtitle", 23);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "div", 17);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "div", 24);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6);
 
@@ -1090,11 +1124,11 @@
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "div");
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-card-content", 18);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-card-content", 25);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "google-map", 19);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "google-map", 26);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "map-marker", 20);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "map-marker", 27);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "map-info-window");
 
@@ -1112,25 +1146,25 @@
         }
 
         if (rf & 2) {
-          var site_r5 = ctx.$implicit;
+          var site_r7 = ctx.$implicit;
 
-          var ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](site_r5.name);
+          var ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](site_r5.address);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](site_r7.name);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("center", site_r5.latlng)("zoom", ctx_r3.map.zoom)("options", ctx_r3.map.options);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](site_r7.address);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("center", site_r7.latlng)("zoom", ctx_r5.map.zoom)("options", ctx_r5.map.options);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", site_r5.latlng);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", site_r7.latlng);
         }
       }
 
@@ -1149,6 +1183,8 @@
           this.search = "";
           this.orgs = [];
           this.sites = [];
+          this.role = "";
+          this.org_priv = null;
           this.org_id = "";
           this.site_name = "";
           this.me = "";
@@ -1164,6 +1200,7 @@
           };
           this.claimDisabled = true;
           this.topBarLoading = false;
+          this.noSiteToDisplay = false;
         }
 
         _createClass(OrgComponent, [{
@@ -1195,29 +1232,34 @@
               return _this.site_name = site_name;
             });
 
+            this._appService.role.subscribe(function (role) {
+              return _this.role = role;
+            });
+
             this.me = this.self["email"] || null;
+            var tmp_orgs = [];
 
             if (this.self != {} && this.self["privileges"]) {
               this.self["privileges"].forEach(function (element) {
                 if (element["scope"] == "org") {
-                  if (_this.orgs.indexOf({
-                    id: element["org_id"],
-                    name: element["name"]
-                  }) < 0) {
+                  if (tmp_orgs.indexOf(element["org_id"]) < 0) {
                     _this.orgs.push({
                       id: element["org_id"],
-                      name: element["name"]
+                      name: element["name"],
+                      role: element["role"]
                     });
+
+                    tmp_orgs.push(element["org_id"]);
                   }
                 } else if (element["scope"] == "site") {
-                  if (_this.orgs.indexOf({
-                    id: element["org_id"],
-                    name: element["org_name"]
-                  }) < 0) {
+                  if (tmp_orgs.indexOf(element["org_id"]) < 0) {
                     _this.orgs.push({
                       id: element["org_id"],
-                      name: element["org_name"]
+                      name: element["org_name"],
+                      role: element["role"]
                     });
+
+                    tmp_orgs.push(element["org_id"]);
                   }
                 }
               });
@@ -1233,14 +1275,18 @@
           value: function changeOrg() {
             var _this2 = this;
 
+            this.org_id = this.org_priv.id;
+            this.role = this.org_priv.role;
             this.topBarLoading = true;
             this.claimDisabled = false;
+            this.sites = [];
 
             this._http.post('/api/sites/', {
               host: this.host,
               cookies: this.cookies,
               headers: this.headers,
-              org_id: this.org_id
+              org_id: this.org_id,
+              role: this.role
             }).subscribe({
               next: function next(data) {
                 return _this2.parseSites(data);
@@ -1262,13 +1308,11 @@
           key: "parseSites",
           value: function parseSites(data) {
             if (data.sites.length > 0) {
+              this.noSiteToDisplay = false;
               this.sites = this.sortList(data.sites, "name");
-            } // this.sites.forEach(element => {
-            //   center: google.maps.LatLng = element.latlng;
-            //   zoom: 4
-            //   element.
-            // })
-
+            } else {
+              this.noSiteToDisplay = true;
+            }
 
             this.topBarLoading = false;
           } // ROUTING FUNCTION
@@ -1289,6 +1333,8 @@
         }, {
           key: "gotoDash",
           value: function gotoDash() {
+            this._appService.roleSet(this.role);
+
             this._appService.orgIdSet(this.org_id);
 
             this._router.navigate(["/dashboard"]);
@@ -1334,9 +1380,9 @@
       OrgComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
         type: OrgComponent,
         selectors: [["app-org"]],
-        decls: 17,
-        vars: 6,
-        consts: [[1, "card-outer"], ["fxLayout", "column", 1, "top-bar-container"], ["fxLayout", "row wrap", 1, "top-bar", "mat-elevation-z8"], ["appearance", "outline", 1, "list"], [3, "value", "valueChange", "selectionChange"], [3, "value", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", "color", "accent", 1, "create", 2, "margin", "auto 20px auto auto", 3, "disabled", "click"], [1, "material-icons", 2, "margin", "auto 10px auto auto"], ["style", "width: 100%; height: 4px; background-color: rgb(111 157 43);", 4, "ngIf"], ["mode", "indeterminate", "color", "accent", 4, "ngIf"], ["fxLayout", "row wrap", "fxLayoutAlign", "start stretch"], ["class", "mat-elevation-z2", "fxLayout", "column", "fxLayoutAlign", "space-between stretch", "style", "cursor: pointer;margin: 10px; padding: 0px; width: 300px;", 3, "click", 4, "ngFor", "ngForOf"], [3, "value"], [2, "width", "100%", "height", "4px", "background-color", "rgb(111 157 43)"], ["mode", "indeterminate", "color", "accent"], ["fxLayout", "column", "fxLayoutAlign", "space-between stretch", 1, "mat-elevation-z2", 2, "cursor", "pointer", "margin", "10px", "padding", "0px", "width", "300px", 3, "click"], [2, "margin", "10px"], [2, "width", "100%"], [2, "margin", "0px"], ["height", "300px", "width", "300px", 3, "center", "zoom", "options"], [3, "position"]],
+        decls: 20,
+        vars: 8,
+        consts: [[1, "card-outer"], ["fxLayout", "column", 1, "top-bar-container"], ["fxLayout", "row wrap", 1, "top-bar", "mat-elevation-z8"], ["appearance", "outline", 1, "list"], [3, "value", "valueChange", "selectionChange"], [3, "value", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", "color", "accent", 1, "create", 2, "margin", "auto 20px auto auto", 3, "disabled", "click"], [1, "material-icons", 2, "margin", "auto 10px auto auto"], ["style", "width: 100%; height: 4px; background-color: rgb(111 157 43);", 4, "ngIf"], ["mode", "indeterminate", "color", "accent", 4, "ngIf"], ["fxLayoutAlign", "center", 4, "ngIf"], ["fxLayout", "column", "fxLayoutAlign", "center stretch", 4, "ngIf"], ["fxLayout", "row wrap", "fxLayoutAlign", "start stretch"], ["class", "mat-elevation-z2", "fxLayout", "column", "fxLayoutAlign", "space-between stretch", "style", "cursor: pointer;margin: 10px; padding: 0px; width: 300px;", 3, "click", 4, "ngFor", "ngForOf"], [3, "value"], [2, "width", "100%", "height", "4px", "background-color", "rgb(111 157 43)"], ["mode", "indeterminate", "color", "accent"], ["fxLayoutAlign", "center"], [2, "color", "#777"], ["fxLayout", "column", "fxLayoutAlign", "center stretch"], ["fxLayoutAlign", "center stretch", 2, "color", "#777", "margin", "2em auto"], ["fxLayoutAlign", "center stretch", 2, "color", "#777", "font-size", "small", "margin-bottom", "2em"], ["fxLayout", "column", "fxLayoutAlign", "space-between stretch", 1, "mat-elevation-z2", 2, "cursor", "pointer", "margin", "10px", "padding", "0px", "width", "300px", 3, "click"], [2, "margin", "10px"], [2, "width", "100%"], [2, "margin", "0px"], ["height", "300px", "width", "300px", 3, "center", "zoom", "options"], [3, "position"]],
         template: function OrgComponent_Template(rf, ctx) {
           if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 0);
@@ -1356,7 +1402,7 @@
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-select", 4);
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function OrgComponent_Template_mat_select_valueChange_6_listener($event) {
-              return ctx.org_id = $event;
+              return ctx.org_priv = $event;
             })("selectionChange", function OrgComponent_Template_mat_select_selectionChange_6_listener() {
               return ctx.changeOrg();
             });
@@ -1395,9 +1441,17 @@
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "div", 10);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "div");
 
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, OrgComponent_mat_card_16_Template, 13, 6, "mat-card", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, OrgComponent_mat_card_16_Template, 3, 0, "mat-card", 10);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, OrgComponent_mat_card_17_Template, 5, 0, "mat-card", 11);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](18, "div", 12);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](19, OrgComponent_mat_card_19_Template, 13, 6, "mat-card", 13);
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
@@ -1407,7 +1461,7 @@
           if (rf & 2) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](6);
 
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", ctx.org_id);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", ctx.org_priv);
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
@@ -1424,6 +1478,14 @@
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.topBarLoading == true);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx.org_id);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.noSiteToDisplay);
 
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
@@ -1974,6 +2036,7 @@
           this.sites = [];
           this.maps = [];
           this.org_id = "";
+          this.role = "";
           this.site_name = "__any__";
           this.map_id = "__any__";
           this.device_type = "";
@@ -2015,6 +2078,10 @@
               return _this3.site_name = site_name;
             });
 
+            this._appService.role.subscribe(function (role) {
+              return _this3.role = role;
+            });
+
             this.getMaps();
             this.getDevices();
           }
@@ -2032,7 +2099,8 @@
                 headers: this.headers,
                 org_id: this.org_id,
                 full: true,
-                type: this.device_type
+                type: this.device_type,
+                role: this.role
               };
             } else if (this.site_name) {
               body = {
@@ -2042,7 +2110,8 @@
                 org_id: this.org_id,
                 site_name: this.site_name,
                 full: true,
-                type: this.device_type
+                type: this.device_type,
+                role: this.role
               };
             }
 
@@ -2086,7 +2155,8 @@
               cookies: this.cookies,
               headers: this.headers,
               org_id: this.org_id,
-              site_name: this.site_name
+              site_name: this.site_name,
+              role: this.role
             }).subscribe({
               next: function next(data) {
                 return _this5.parseMap(data);
@@ -2135,6 +2205,7 @@
                 host: this.host,
                 cookies: this.cookies,
                 headers: this.headers,
+                role: this.role,
                 org_id: this.org_id,
                 device_mac: device.mac
               }).subscribe({
@@ -2156,6 +2227,7 @@
                 host: this.host,
                 cookies: this.cookies,
                 headers: this.headers,
+                role: this.role,
                 org_id: this.org_id,
                 device_mac: device.mac
               }).subscribe({
@@ -2274,6 +2346,7 @@
                   host: _this8.host,
                   cookies: _this8.cookies,
                   headers: _this8.headers,
+                  role: _this8.role,
                   org_id: _this8.org_id,
                   device: result.device,
                   device_mac: result.device_mac
@@ -2314,6 +2387,7 @@
                   host: _this9.host,
                   cookies: _this9.cookies,
                   headers: _this9.headers,
+                  role: _this9.role,
                   org_id: _this9.org_id,
                   site_name: _this9.site_name,
                   map_id: _this9.map_id,
@@ -4318,6 +4392,7 @@
           this.selfSource = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]({});
           this.orgIdSource = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]("");
           this.siteNameSource = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]("");
+          this.roleSource = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]("");
           this.googleApiKey = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"]("");
           this.headers = this.headersSource.asObservable();
           this.host = this.hostSource.asObservable();
@@ -4325,6 +4400,7 @@
           this.self = this.selfSource.asObservable();
           this.org_id = this.orgIdSource.asObservable();
           this.site_name = this.siteNameSource.asObservable();
+          this.role = this.roleSource.asObservable();
           this.google_api_key = this.googleApiKey.asObservable();
         }
 
@@ -4357,6 +4433,11 @@
           key: "siteNameSet",
           value: function siteNameSet(data) {
             this.siteNameSource.next(data);
+          }
+        }, {
+          key: "roleSet",
+          value: function roleSet(data) {
+            this.roleSource.next(data);
           }
         }, {
           key: "googleApiKeySet",

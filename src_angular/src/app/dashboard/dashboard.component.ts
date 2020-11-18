@@ -60,6 +60,7 @@ export class DashboardComponent implements OnInit {
   sites = [];
   maps = [];
   org_id: string = "";
+  role: string = "";
   site_name: string = "__any__";
   map_id: string = "__any__";
   device_type: string = ""
@@ -88,7 +89,8 @@ export class DashboardComponent implements OnInit {
     this._appService.self.subscribe(self => this.self = self || {})
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this._appService.site_name.subscribe(site_name => this.site_name = site_name)
-   
+    this._appService.role.subscribe(role => this.role = role)
+    
     this.getMaps();
     this.getDevices();
   }
@@ -97,9 +99,9 @@ export class DashboardComponent implements OnInit {
   getDevices() {
     var body = null
     if (this.site_name == "__any__") {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type, role: this.role }
     } else if (this.site_name) {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type, role: this.role }
     }
     if (body) {
         this.loading = true;
@@ -129,7 +131,7 @@ export class DashboardComponent implements OnInit {
 
   getMaps() {
     this.topBarLoading = true;
-    this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name }).subscribe({
+    this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, role: this.role }).subscribe({
       next: data => this.parseMap(data),
       error: error => {
         var message: string = "There was an error... "
@@ -161,7 +163,7 @@ export class DashboardComponent implements OnInit {
 
   locate(device:DeviceElement): void{
     if (device.isLocating == true) {
-      this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, device_mac: device.mac }).subscribe({
+      this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
         next: data => device.isLocating = false,
         error: error => {
           var message: string = "There was an error... "
@@ -172,7 +174,7 @@ export class DashboardComponent implements OnInit {
         }
       })
     } else {
-      this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, device_mac: device.mac }).subscribe({
+      this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
         next: data => device.isLocating = true,
         error: error => {
           var message: string = "There was an error... "
@@ -263,6 +265,7 @@ export class DashboardComponent implements OnInit {
           host: this.host,
           cookies: this.cookies,
           headers: this.headers,
+          role: this.role,
           org_id: this.org_id,
           device: result.device,
           device_mac: result.device_mac
@@ -293,6 +296,7 @@ export class DashboardComponent implements OnInit {
           host: this.host,
           cookies: this.cookies,
           headers: this.headers,
+          role: this.role,
           org_id: this.org_id,
           site_name: this.site_name,
           map_id: this.map_id,
