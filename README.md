@@ -28,8 +28,10 @@ You can run it as a strandalone Python application, or deploy it as a Docker con
 
 
 ## Configuration
-No Configuration required
+You can configure the settings through a configuration file or through Environment Variables.
 
+### Configuration File
+A configuration example with explanation is avaiable in the `django/backend/config_example.py`. This file must be edited and renamed `config.py`.
 
 ### Environment Variables
 | Variable Name | Type | Default Value | Comment |
