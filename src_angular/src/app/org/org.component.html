@@ -20,6 +20,18 @@
         </div>
         <mat-progress-bar mode="indeterminate" color="accent" *ngIf="topBarLoading == true"></mat-progress-bar>
     </div>
+    <div>
+        <mat-card *ngIf="!org_id" fxLayoutAlign="center">
+            <span style="color:#777">
+            Please Select an Organization
+            </span>
+        </mat-card>
+        <mat-card *ngIf="noSiteToDisplay" fxLayoutAlign="center">
+            <span style="color:#777">
+            You don't have access to any Site in this Organization. Please chose another Organization.
+            </span>
+        </mat-card>
+    </div>
     <div fxLayout="row wrap" fxLayoutAlign="start stretch">
         <mat-card *ngFor="let site of sites" class="mat-elevation-z2" fxLayout="column" (click)="setSite(site)" fxLayoutAlign="space-between stretch" style="cursor: pointer;margin: 10px; padding: 0px; width: 300px;">
             <div>

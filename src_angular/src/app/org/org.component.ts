@@ -39,7 +39,7 @@ export class OrgComponent implements OnInit {
   apiLoaded: Observable<boolean>;
   claimDisabled: boolean = true;
   topBarLoading = false;
-
+  noSiteToDisplay = false;
   constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _router: Router) {}
 
 
@@ -51,15 +51,18 @@ export class OrgComponent implements OnInit {
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this._appService.site_name.subscribe(site_name => this.site_name = site_name)
     this.me = this.self["email"] || null
+    var tmp_orgs: string[] = []
     if (this.self != {} && this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
         if (element["scope"] == "org") {
-          if (this.orgs.indexOf({ id: element["org_id"], name: element["name"] }) < 0) {
+          if (tmp_orgs.indexOf(element["org_id"]) < 0) {
             this.orgs.push({ id: element["org_id"], name: element["name"] })
+            tmp_orgs.push(element["org_id"])
           }
         } else if (element["scope"] == "site") {
-          if (this.orgs.indexOf({ id: element["org_id"], name: element["org_name"] }) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["org_name"] })
+          if (tmp_orgs.indexOf(element["org_id"]) < 0) {
+            this.orgs.push({ id: element["org_id"], name: element["org_name"], role: element["role"] })
+            tmp_orgs.push(element["org_id"])
           }
         }
       });
@@ -72,6 +75,7 @@ export class OrgComponent implements OnInit {
   changeOrg() {
     this.topBarLoading = true;
     this.claimDisabled = false;
+    this.sites = [];
     this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id }).subscribe({
       next: data => this.parseSites(data),
       error: error => {
@@ -86,13 +90,11 @@ export class OrgComponent implements OnInit {
   }
   parseSites(data) {
     if (data.sites.length > 0) {
+      this.noSiteToDisplay = false;
       this.sites = this.sortList(data.sites, "name");
+    } else {
+      this.noSiteToDisplay = true;
     }
-    // this.sites.forEach(element => {
-    //   center: google.maps.LatLng = element.latlng;
-    //   zoom: 4
-    //   element.
-    // })
     this.topBarLoading = false;
   }
 
