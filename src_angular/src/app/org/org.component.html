@@ -3,8 +3,8 @@
         <div fxLayout="row wrap" class="top-bar  mat-elevation-z8">
             <mat-form-field appearance="outline" class="list">
                 <mat-label>Organization</mat-label>
-                <mat-select [(value)]="org_id" (selectionChange)="changeOrg()">
-                    <mat-option *ngFor="let org of orgs " [value]="org.id">
+                <mat-select [(value)]="org_priv" (selectionChange)="changeOrg()">
+                    <mat-option *ngFor="let org of orgs " [value]="org">
                         {{org.name}}
                     </mat-option>
                 </mat-select>
@@ -26,10 +26,13 @@
             Please Select an Organization
             </span>
         </mat-card>
-        <mat-card *ngIf="noSiteToDisplay" fxLayoutAlign="center">
-            <span style="color:#777">
-            You don't have access to any Site in this Organization. Please chose another Organization.
-            </span>
+        <mat-card *ngIf="noSiteToDisplay" fxLayout="column" fxLayoutAlign="center stretch">
+            <div style="color:#777; margin: 2em auto;" fxLayoutAlign="center stretch">
+                You don't have access to any Site in this Organization. Please chose another Organization.
+            </div>
+            <div style="color: #777; font-size: small; margin-bottom: 2em;" fxLayoutAlign="center stretch">
+                Only the Sites Installers with the "Installer" authorizations are listed.
+            </div>
         </mat-card>
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="start stretch">
