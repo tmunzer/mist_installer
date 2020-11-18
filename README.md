@@ -27,3 +27,10 @@ You can run it as a strandalone Python application, or deploy it as a Docker con
 
 ## Configuration
 No Configuration required
+
+
+### Environment Variables
+| Variable Name | Type | Default Value | Comment |
+| ------------- | ---- | ------------- | ------- |
+DJANGO_DEBUG | Number | 0 | Whether or not Django starts in Debug Mode (0=Production, 1=Debug) |
+DJANGO_ALLOWED_HOSTS | String |  | FQDN on which Django is listening. Only used in Production Mode |
