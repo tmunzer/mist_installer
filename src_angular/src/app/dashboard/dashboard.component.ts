@@ -3,8 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 
 import { MatPaginator } from '@angular/material/paginator';
-import { merge, Observable, of as observableOf } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 
 import { ClaimDialog } from './dashboard-claim';
 import { UnclaimDialog } from './dashboard-unclaim';
@@ -15,8 +13,6 @@ import { ErrorDialog } from './dashboard-error';
 import { ConnectorService } from '../connector.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { WarningDialog } from './dashboard-warning';
-import { ThrowStmt } from '@angular/compiler';
 
 export interface DeviceElement {
   mac: string;
@@ -34,7 +30,7 @@ export interface DeviceElement {
   site_name: string;
   x: Int16Array;
   y: Int16Array;
-
+  isLocating: boolean;
 }
 
 export interface MistDevices {
@@ -44,15 +40,6 @@ export interface MistDevices {
   page: number;
 }
 
-export class MistHttpDatabase {
-  constructor(private _httpClient: HttpClient) { }
-
-  loadDevices(body: {}, pageIndex: number, pageSize: number): Observable<MistDevices> {
-    body["page"] = pageIndex;
-    body["limit"] = pageSize;
-    return this._httpClient.post<MistDevices>('/api/devices/', body);
-  }
-}
 
 @Component({
   selector: 'app-dashboard',
@@ -78,22 +65,17 @@ export class DashboardComponent implements OnInit {
   device_type: string = ""
   me: string = "";
 
-  sitesDisabled: boolean = true;
-  mapsDisabled: boolean = true;
-  claimDisabled: boolean = true;
-  claimButton: string = "To Org";
+  claimButton: string = "To Site";
 
   topBarLoading = false;
   loading = false;
 
-  isRateLimitReached = false;
-  devicesDatabase: MistHttpDatabase | null;
+
   filteredDevicesDatase: MatTableDataSource<DeviceElement> | null;
   devices: DeviceElement[] = []
 
-  filters_enabled: boolean = false
   resultsLength = 0;
-  displayedColumns: string[] = ['mac', 'name', 'type', 'model', 'serial',  'connected', 'site_name'];//, 'action'];
+  displayedColumns: string[] = ['mac', 'name', 'type', 'model', 'serial',  'connected', 'site_name', 'action']
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -104,41 +86,34 @@ export class DashboardComponent implements OnInit {
     this._appService.cookies.subscribe(cookies => this.cookies = cookies)
     this._appService.host.subscribe(host => this.host = host)
     this._appService.self.subscribe(self => this.self = self || {})
-    this.me = this.self["email"] || null
-    if (this.self != {} && this.self["privileges"]) {
-      this.self["privileges"].forEach(element => {
-        if (element["scope"] == "org") {
-          if (this.orgs.indexOf({ id: element["org_id"], name: element["name"] }) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["name"] })
-          }
-        } else if (element["scope"] == "site") {
-          if (this.orgs.indexOf({ id: element["org_id"], name: element["org_name"] }) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["org_name"] })
-          }
-        }
-      });
-      this.orgs = this.sortList(this.orgs, "name");
-      if (this.orgs.length == 1) {
-        this.org_id = this.orgs[1]["id"]
-      }
-    }
+    this._appService.org_id.subscribe(org_id => this.org_id = org_id)
+    this._appService.site_name.subscribe(site_name => this.site_name = site_name)
+   
+    this.getMaps();
+    this.getDevices();
   }
 
 
   getDevices() {
     var body = null
     if (this.site_name == "__any__") {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: this.filters_enabled, type: this.device_type }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type }
     } else if (this.site_name) {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: this.filters_enabled, type: this.device_type }
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type }
     }
     if (body) {
-
-      if (this.filters_enabled) {
         this.loading = true;
         this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
           next: data => {
-            this.filteredDevicesDatase = new MatTableDataSource(data["results"]);
+            console.log(data)
+              var tmp: DeviceElement[] = []
+              data["results"].forEach(element => {
+                if (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id)){
+                  tmp.push(element)
+                }
+              });
+              this.filteredDevicesDatase = new MatTableDataSource(tmp);
+            
             this.filteredDevicesDatase.paginator = this.paginator;
             this.loading = false;
           },
@@ -149,65 +124,11 @@ export class DashboardComponent implements OnInit {
           }
         })
 
-      } else {
-        this.devicesDatabase = new MistHttpDatabase(this._http);
-        merge(this.paginator.page, this.paginator.pageSize)
-          .pipe(
-            startWith({}),
-            switchMap(() => {
-              this.loading = true;
-              return this.devicesDatabase!.loadDevices(body, this.paginator.pageIndex, this.paginator.pageSize);
-            }),
-            map(data => {
-              // Flip flag to show that loading has finished.
-              this.loading = false;
-              this.isRateLimitReached = false;
-              this.resultsLength = data.total;
-              return data.results;
-            }),
-            catchError(() => {
-              // Catch if the GitHub API has reached its rate limit. Return empty data.
-              this.isRateLimitReached = true;
-              return observableOf([]);
-            })
-          ).subscribe(data => this.devices = data);
-      }
     }
   }
 
-  changeOrg() {
+  getMaps() {
     this.topBarLoading = true;
-    this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id }).subscribe({
-      next: data => this.parseSites(data),
-      error: error => {
-        var message: string = "There was an error... "
-        if ("error" in error) {
-          message += error["error"]["message"]
-        }
-        this.topBarLoading = false;
-        this.openError(message)
-      }
-    })
-  }
-  parseSites(data) {
-    if (data.sites.length > 0) {
-      this.sitesDisabled = false;
-      this.sites = this.sortList(data.sites, "name");
-    }
-    this.topBarLoading = false;
-    this.getDevices();
-    this.site_name = "__any__";
-    this.claimDisabled = false;
-  }
-
-  changeSite() {
-    if (this.site_name == "__any__") {
-      this.claimButton = "To Org";
-    } else {
-      this.claimButton = "To Site";
-    }
-    this.topBarLoading = true;
-    this.mapsDisabled = true;
     this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name }).subscribe({
       next: data => this.parseMap(data),
       error: error => {
@@ -222,11 +143,9 @@ export class DashboardComponent implements OnInit {
   }
   parseMap(data) {
     if (data.maps.length > 0) {
-      this.mapsDisabled = false;
-      this.maps = this.sortList(data.maps, "name");
+      this.maps = this.sortList(data.maps, "name");    
     }
     this.topBarLoading = false;
-    this.getDevices();
     this.map_id = "__any__";
   }
 
@@ -238,6 +157,32 @@ export class DashboardComponent implements OnInit {
       this.claimButton = "To Map";
     }
     this.getDevices()
+  }
+
+  locate(device:DeviceElement): void{
+    if (device.isLocating == true) {
+      this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, device_mac: device.mac }).subscribe({
+        next: data => device.isLocating = false,
+        error: error => {
+          var message: string = "There was an error... "
+          if ("error" in error) {
+            message += error["error"]["message"]
+          }
+          this.openError(message)
+        }
+      })
+    } else {
+      this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, device_mac: device.mac }).subscribe({
+        next: data => device.isLocating = true,
+        error: error => {
+          var message: string = "There was an error... "
+          if ("error" in error) {
+            message += error["error"]["message"]
+          }
+          this.openError(message)
+        }
+      })
+    }
   }
 
   // COMMON

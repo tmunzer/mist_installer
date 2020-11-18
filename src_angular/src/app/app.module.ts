@@ -1,10 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
+
+import { GoogleMapsModule } from '@angular/google-maps';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -37,12 +39,14 @@ import { DeviceDialog } from './dashboard/dashboard-device';
 import { ErrorDialog } from './dashboard/dashboard-error';
 import { WarningDialog } from './dashboard/dashboard-warning';
 import { ClaimDetailsDialog } from './dashboard/dashboard-claim-details';
+import { OrgComponent } from './org/org.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent, TwoFactorDialog,
-    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog
+    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog, 
+    OrgComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +54,9 @@ import { ClaimDetailsDialog } from './dashboard/dashboard-claim-details';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    GoogleMapsModule,
     HttpClientModule,
+    HttpClientJsonpModule,
     MatButtonModule,
     MatChipsModule,
     MatSelectModule,

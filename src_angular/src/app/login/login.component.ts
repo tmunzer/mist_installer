@@ -20,7 +20,7 @@ export interface TwoFactorData {
 
 export class LoginComponent implements OnInit {
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router, private appService: ConnectorService, public _dialog: MatDialog, private _platformLocation: PlatformLocation
+  constructor(private _formBuilder: FormBuilder, private _http: HttpClient, private _router: Router, private _appService: ConnectorService, public _dialog: MatDialog, private _platformLocation: PlatformLocation
     ) { }
 
   host = null;
@@ -37,9 +37,9 @@ export class LoginComponent implements OnInit {
   ];
 
   // LOGIN FORM
-  frmStepLogin = this.formBuilder.group({
+  frmStepLogin = this._formBuilder.group({
     host: [''],
-    credentials: this.formBuilder.group({
+    credentials: this._formBuilder.group({
       email: [''],
       password: [''],
     }),
@@ -56,14 +56,18 @@ export class LoginComponent implements OnInit {
     if (this.hostnames_to_show_github_fork_me.indexOf(this._platformLocation.hostname) >= 0){      
       this.show_github_fork_me = true;
     }
-    this.frmStepLogin = this.formBuilder.group({
+    this.frmStepLogin = this._formBuilder.group({
       host: ['api.mist.com'],
-      credentials: this.formBuilder.group({
+      credentials: this._formBuilder.group({
         email: [''],
         password: [''],
       }),
       token: [""],
     });
+    this._http.get<any>('/api/gap').subscribe({
+      next: data => this._appService.googleApiKeySet(data.gap),
+      error: error => console.error("Unable to load the Google API Key... Maps won't be available...")      
+    })
   }
 
   //// COMMON ////
@@ -78,10 +82,10 @@ export class LoginComponent implements OnInit {
   // RESET AUTHENTICATION FORM
   reset_response(): void {
     this.host = null;
-    this.appService.headersSet({});
-    this.appService.cookiesSet({});
-    this.appService.selfSet({});
-    this.appService.hostSet(this.host);
+    this._appService.headersSet({});
+    this._appService.cookiesSet({});
+    this._appService.selfSet({});
+    this._appService.hostSet(this.host);
     this.reset_error_mess();
   }
   reset_error_mess(): void{
@@ -122,11 +126,12 @@ export class LoginComponent implements OnInit {
 
   // WHEN AUTHENTICATION IS OK
   authenticated(data): void {
-    this.appService.headersSet(data.headers);
-    this.appService.cookiesSet(data.cookies);
-    this.appService.hostSet(data.host);
-    this.appService.selfSet(data.data)
-    this.loading = false; this.router.navigate(['/dashboard']);
+    this._appService.headersSet(data.headers);
+    this._appService.cookiesSet(data.cookies);
+    this._appService.hostSet(data.host);
+    this._appService.selfSet(data.data)
+    this.loading = false; 
+    this._router.navigate(['/select']);
   }
 
   //// AUTHENTICATION ////
@@ -134,7 +139,7 @@ export class LoginComponent implements OnInit {
     this.reset_response();
     if (this.check_host()) {
       this.loading = true;
-      this.http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password }).subscribe({
+      this._http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password }).subscribe({
         next: data => this.parse_response(data),
         error: error => this.error_message("credentials", error.error.message)      
       })
@@ -144,7 +149,7 @@ export class LoginComponent implements OnInit {
     this.reset_response();
     if (this.check_host()) {
       this.loading = true;
-      this.http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, token: this.frmStepLogin.value.token }).subscribe({
+      this._http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, token: this.frmStepLogin.value.token }).subscribe({
         next: data => this.parse_response(data),
         error: error => this.error_message("credentials", error.error.message)
       })
@@ -153,7 +158,7 @@ export class LoginComponent implements OnInit {
   submit2FA(twoFactor: number): void {
     if (this.check_host()) {
       this.loading = true;
-      this.http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password, two_factor: twoFactor }).subscribe({
+      this._http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password, two_factor: twoFactor }).subscribe({
         next: data => this.parse_response(data),
         error: error => this.error_message("credentials", error.error.message)      
       })

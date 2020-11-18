@@ -12,11 +12,11 @@ from .lib.devices import Devices
 from .lib.sites import Sites
 from .lib.maps import Maps
 
-# try:
-#     from .config import smtp_config
-# except:
-#     import os
-#     smtp_enabled = os.environ.get("MIST_SMTP_ENABLED", default=False)
+try:
+    from .config import google_api_key
+except:
+    import os
+    google_api_key = os.environ.get("GOOGLE_API_KEY", default="")
 #     if smtp_enabled:
 #         smtp_config = {
 #             "host": os.environ.get("MIST_SMTP_HOST", default=None),
@@ -77,6 +77,24 @@ def unclaim_device(request):
 def provision_device(request):
     if request.method == "POST":
         response = Devices().provision_device(request.body)
+        return JsonResponse(status=response["status"], data=response["data"])
+    else:
+        return Http404
+
+
+@csrf_exempt
+def locate(request):
+    if request.method == "POST":
+        response = Devices().locate(request.body)
+        return JsonResponse(status=response["status"], data=response["data"])
+    else:
+        return Http404
+
+
+@csrf_exempt
+def unlocate(request):
+    if request.method == "POST":
+        response = Devices().unlocate(request.body)
         return JsonResponse(status=response["status"], data=response["data"])
     else:
         return Http404
@@ -173,3 +191,24 @@ def login(request):
 #             return JsonResponse({"result": resp})
 #         else:
 #             return JsonResponse(status=500, data={"message": "missing parametesr"})
+
+@csrf_exempt
+def gap(request):
+    if request.method == "GET":
+        return JsonResponse({"gap":google_api_key})
+        
+@csrf_exempt
+def script(request):
+    if request.method == "GET":
+        data = """
+var script = document.createElement('script');
+script.src = 'https://maps.googleapis.com/maps/api/js?key={0}&callback=initMap';
+script.defer = true;
+
+window.initMap = function() {{
+}};
+
+// Append the 'script' element to 'head'
+document.head.appendChild(script);
+        """.format(google_api_key)
+        return HttpResponse(data, content_type="application/javascript")

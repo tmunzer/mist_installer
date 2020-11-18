@@ -144,7 +144,6 @@ class Devices(Common):
 
     def _provision_device(self, body):
         extract = self.extractAuth(body)
-        print(body)
         if "device" in body and "device_mac" in body:
             data = {}
             for key in body["device"]:
@@ -152,14 +151,59 @@ class Devices(Common):
                     data[key]=body["device"][key]
                 elif key != "site_id":
                     data[key]=""
+            try:
+                url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}".format(
+                    body["host"], body["org_id"], body["device_mac"])
+                resp = requests.put(
+                    url, headers=extract["headers"], cookies=extract["cookies"], json=data)
+                return {"status": 200, "data": {"result": resp.json()}}
+            except:
+                return {"status": 500, "data": {"message": "unable to provision the device"}}
+        else:
+            return {"status": 500, "data": {"message": "device or device_mac missing"}}
+
+
+#############
+# Locate/Unlocate a device
+#############
+    def locate(self, body):
+        body = self.get_body(body)
+        if "org_id" in body:
+            return self._locate(body)
+        else:
+            return {"status": 500, "data": {"message": "org_id missing"}}
+
+    def _locate(self, body):
+        extract = self.extractAuth(body)
+        if "device_mac" in body:
             #try:
-            print(data)
-            url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}".format(
+            url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}/locate".format(
                 body["host"], body["org_id"], body["device_mac"])
-            resp = requests.put(
-                url, headers=extract["headers"], cookies=extract["cookies"], json=data)
+            resp = requests.post(
+                url, headers=extract["headers"], cookies=extract["cookies"])
             return {"status": 200, "data": {"result": resp.json()}}
             #except:
             #    return {"status": 500, "data": {"message": "unable to provision the device"}}
         else:
-            return {"status": 500, "data": {"message": "device or device_mac missing"}}
+            return {"status": 500, "data": {"message": "device_mac missing"}}
+
+    def unlocate(self, body):
+        body = self.get_body(body)
+        if "org_id" in body:
+            return self._locate(body)
+        else:
+            return {"status": 500, "data": {"message": "org_id missing"}}
+
+    def _unlocate(self, body):
+        extract = self.extractAuth(body)
+        if "device_mac" in body:
+            #try:
+            url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}/unlocate".format(
+                body["host"], body["org_id"], body["device_mac"])
+            resp = requests.post(
+                url, headers=extract["headers"], cookies=extract["cookies"])
+            return {"status": 200, "data": {"result": resp.json()}}
+            #except:
+            #    return {"status": 500, "data": {"message": "unable to provision the device"}}
+        else:
+            return {"status": 500, "data": {"message": "device_mac missing"}}
