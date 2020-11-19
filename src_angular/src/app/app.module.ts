@@ -21,11 +21,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -45,7 +46,7 @@ import { OrgComponent } from './org/org.component';
   declarations: [
     AppComponent,
     LoginComponent, TwoFactorDialog,
-    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog, 
+    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog,
     OrgComponent
   ],
   imports: [
@@ -66,6 +67,7 @@ import { OrgComponent } from './org/org.component';
     MatCardModule,
     MatProgressSpinnerModule,
     MatRadioModule,
+    MatSlideToggleModule,
     MatTableModule,
     MatCheckboxModule,
     MatProgressBarModule,

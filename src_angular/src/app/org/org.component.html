@@ -3,18 +3,21 @@
         <div fxLayout="row wrap" class="top-bar  mat-elevation-z8">
             <mat-form-field appearance="outline" class="list">
                 <mat-label>Organization</mat-label>
-                <mat-select [(value)]="org_priv" (selectionChange)="changeOrg()">
+                <mat-select [(value)]="selected_org_obj" (selectionChange)="changeOrg()">
                     <mat-option *ngFor="let org of orgs " [value]="org">
                         {{org.name}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
 
+            <div *ngIf="adminAccess" fxLayout="row" fxLayoutAlign="center center">
+                <mat-label style="vertical-align: top;display: inline-block;line-height: 24px; margin-right: 8px;">Installer View</mat-label>
+                <mat-slide-toggle [checked]="adminMode" (change)="changeRole($event)">Admin View</mat-slide-toggle>
+            </div>
             <button mat-raised-button color="accent" class="create" style="margin: auto 20px auto auto" (click)="gotoDash()" [disabled]="claimDisabled">
-                    <mat-icon class="material-icons" style="margin: auto 10px auto auto;">add</mat-icon>
-                    <span>Claim Device to Org</span>
-                </button>
-
+                <mat-icon class="material-icons" style="margin: auto 10px auto auto;">add</mat-icon>
+                <span>Claim Device to Org</span>
+            </button>
         </div>
         <div style="width: 100%; height: 4px; background-color: rgb(111 157 43);" *ngIf="topBarLoading == false">
         </div>
@@ -23,7 +26,7 @@
     <div>
         <mat-card *ngIf="!org_id" fxLayoutAlign="center">
             <span style="color:#777">
-            Please Select an Organization
+                Please Select an Organization
             </span>
         </mat-card>
         <mat-card *ngIf="noSiteToDisplay" fxLayout="column" fxLayoutAlign="center stretch">
@@ -36,21 +39,26 @@
         </mat-card>
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="start stretch">
-        <mat-card *ngFor="let site of sites" class="mat-elevation-z2" fxLayout="column" (click)="setSite(site)" fxLayoutAlign="space-between stretch" style="cursor: pointer;margin: 10px; padding: 0px; width: 300px;">
-            <div>
-                <mat-card-title style="margin:10px">{{site.name}}</mat-card-title>
+        <mat-card *ngFor="let site of sites" class="mat-elevation-z2" fxLayout="column" fxLayoutAlign="space-between stretch" style="cursor: pointer;margin: 10px; padding: 0px; width: 300px;">
+            <div (click)="setSite(site)">
+                <mat-card-title style="margin:10px">
+                    {{site.name}}
+                </mat-card-title>
                 <mat-card-subtitle style="margin: 10px">
                     <div style="width: 100%;">{{site.address}}</div>
                 </mat-card-subtitle>
             </div>
-            <div>
+            <div (click)="setSite(site)">
                 <mat-card-content style="margin: 0px">
                     <google-map [center]="site.latlng" [zoom]="map.zoom" height="300px" width="300px" [options]="map.options">
                         <map-marker [position]="site.latlng"></map-marker>
                         <map-info-window>Test</map-info-window>
                     </google-map>
-
                 </mat-card-content>
+            </div>
+            <div *ngIf="adminMode" fxLayout="column" fxLayoutAlign="center stretch">
+                <button *ngIf="!site.installer" mat-raised-button color="accent" (click)="changeInstaller(site, true)">Add Installer Access</button>
+                <button *ngIf="site.installer" style="background-color: red;" mat-raised-button color="accent" (click)="changeInstaller(site, false)">Remove Installer Access</button>
             </div>
         </mat-card>
     </div>

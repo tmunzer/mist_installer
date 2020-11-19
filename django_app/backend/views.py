@@ -111,6 +111,14 @@ def sites(request):
     else:
         return Http404
 
+@csrf_exempt
+def changeInstaller(request):
+    if request.method == "POST":
+        response = Sites().change_installer_access(request.body)
+        print(response)
+        return JsonResponse(status=response["status"], data=response["data"])
+    else:
+        return Http404
 
 ##########
 # Maps
@@ -195,8 +203,9 @@ def login(request):
 @csrf_exempt
 def gap(request):
     if request.method == "GET":
-        return JsonResponse({"gap":google_api_key})
-        
+        return JsonResponse({"gap": google_api_key})
+
+
 @csrf_exempt
 def script(request):
     if request.method == "GET":

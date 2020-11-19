@@ -22,11 +22,12 @@ export class OrgComponent implements OnInit {
   orgs = [];
   sites = [];
   role: string = "";
-  org_priv = null;
+  selected_org_obj = null;
   org_id: string = "";
   site_name: string = "";
   me: string = "";
-
+  adminMode: boolean = false;
+  adminAccess: boolean = false;
   map = {
     options: {
       scrollwheel: false,
@@ -42,7 +43,7 @@ export class OrgComponent implements OnInit {
   claimDisabled: boolean = true;
   topBarLoading = false;
   noSiteToDisplay = false;
-  constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _router: Router) {}
+  constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _router: Router) { }
 
 
   ngOnInit() {
@@ -57,15 +58,17 @@ export class OrgComponent implements OnInit {
     var tmp_orgs: string[] = []
     if (this.self != {} && this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
-        if (element["scope"] == "org") {
-          if (tmp_orgs.indexOf(element["org_id"]) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["name"], role: element["role"] })
-            tmp_orgs.push(element["org_id"])
-          }
-        } else if (element["scope"] == "site") {
-          if (tmp_orgs.indexOf(element["org_id"]) < 0) {
-            this.orgs.push({ id: element["org_id"], name: element["org_name"], role: element["role"] })
-            tmp_orgs.push(element["org_id"])
+        if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
+          if (element["scope"] == "org") {
+            if (tmp_orgs.indexOf(element["org_id"]) < 0) {
+              this.orgs.push({ id: element["org_id"], name: element["name"], role: element["role"] })
+              tmp_orgs.push(element["org_id"])
+            }
+          } else if (element["scope"] == "site") {
+            if (tmp_orgs.indexOf(element["org_id"]) < 0) {
+              this.orgs.push({ id: element["org_id"], name: element["org_name"], role: element["role"] })
+              tmp_orgs.push(element["org_id"])
+            }
           }
         }
       });
@@ -76,10 +79,24 @@ export class OrgComponent implements OnInit {
     }
   }
   changeOrg() {
-    this.org_id = this.org_priv.id
-    this.role = this.org_priv.role    
+    this.adminMode = false;
+    if (this.selected_org_obj.role == "admin") {
+      this.adminAccess = true;
+    } else {
+      this.adminAccess = false;
+    }
+    this.loadSites();
+  }
+
+  loadSites() {
+    this.org_id = this.selected_org_obj.id
+    if (this.adminMode == true) {
+      this.role = this.selected_org_obj.role;
+    } else {
+      this.role = "installer";
+    }
     this.topBarLoading = true;
-    this.claimDisabled = false;    
+    this.claimDisabled = false;
     this.sites = [];
     this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, role: this.role }).subscribe({
       next: data => this.parseSites(data),
@@ -103,12 +120,35 @@ export class OrgComponent implements OnInit {
     this.topBarLoading = false;
   }
 
+  changeRole(event) {
+    this.adminMode = event.checked;
+    this.loadSites();
+  }
+
+  changeInstaller(site, enabled): void {
+    this.topBarLoading = true
+    this._http.post<any>('/api/sites/installer/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: site.id, enabled: enabled }).subscribe({
+      next: data => {
+        this.topBarLoading = false;
+        site.installer = enabled;
+      },
+      error: error => {
+        var message: string = "There was an error... "
+        if ("error" in error) {
+          message += error["error"]["message"]
+        }
+        this.topBarLoading = false;
+        this.openError(message)
+      }
+    })
+  }
+
 
   // ROUTING FUNCTION
   setSite(site): void {
     if (site != null) {
       this.site_name = site.name;
-    } else { 
+    } else {
       this.site_name = "";
     }
     this._appService.siteNameSet(this.site_name);
