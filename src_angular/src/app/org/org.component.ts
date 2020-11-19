@@ -24,7 +24,8 @@ export class OrgComponent implements OnInit {
   role: string = "";
   selected_org_obj = {
     id:"",
-    name:""
+    name:"",
+    role: ""
   };
   org_id: string = "";
   site_name: string = "";
@@ -99,7 +100,7 @@ export class OrgComponent implements OnInit {
       this.role = "installer";
     }
     this.topBarLoading = true;
-    this.claimDisabled = false;
+    this.claimDisabled = true;
     this.sites = [];
     this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, role: this.role }).subscribe({
       next: data => this.parseSites(data),
@@ -117,6 +118,7 @@ export class OrgComponent implements OnInit {
     if (data.sites.length > 0) {
       this.noSiteToDisplay = false;
       this.sites = this.sortList(data.sites, "name");
+      this.claimDisabled = false;
     } else {
       this.noSiteToDisplay = true;
     }

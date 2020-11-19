@@ -6,7 +6,7 @@
 
                 <mat-form-field appearance="outline" class="list">
                     <mat-label>Map</mat-label>
-                    <mat-select [(value)]="map_id" (selectionChange)="changeMap()">
+                    <mat-select [disabled]="!site_name" [(value)]="map_id" (selectionChange)="changeMap()">
                         <mat-option value="__any__">All Devices</mat-option>
                         <mat-option *ngFor="let map of maps " [value]="map.id">
                             {{map.name}}

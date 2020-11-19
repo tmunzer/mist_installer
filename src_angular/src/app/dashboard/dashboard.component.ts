@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit {
   devices: DeviceElement[] = []
 
   resultsLength = 0;
-  displayedColumns: string[] = ['mac', 'name', 'type', 'model', 'serial',  'connected', 'site_name', 'action']
+  displayedColumns: string[] = ['mac', 'name', 'type', 'model', 'serial', 'connected', 'site_name', 'action']
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -90,41 +90,43 @@ export class DashboardComponent implements OnInit {
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this._appService.site_name.subscribe(site_name => this.site_name = site_name)
     this._appService.role.subscribe(role => this.role = role)
-    
-    this.getMaps();
+
     this.getDevices();
+    if (this.site_name) {
+      this.getMaps();
+    }
   }
 
 
   getDevices() {
     var body = null
-    if (this.site_name == "__any__") {
+    if (this.site_name == "__any__" || this.site_name == "") {
       body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type, role: this.role }
     } else if (this.site_name) {
       body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type, role: this.role }
     }
     if (body) {
-        this.loading = true;
-        this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
-          next: data => {
-            console.log(data)
-              var tmp: DeviceElement[] = []
-              data["results"].forEach(element => {
-                if (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id)){
-                  tmp.push(element)
-                }
-              });
-              this.filteredDevicesDatase = new MatTableDataSource(tmp);
-            
-            this.filteredDevicesDatase.paginator = this.paginator;
-            this.loading = false;
-          },
-          error: error => {
-            var message: string = "There was an error... "
-            if ("error" in error) { message += error["error"]["message"] }
-            this.openError(message)
-          }
-        })
+      this.loading = true;
+      this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
+        next: data => {
+          console.log(data)
+          var tmp: DeviceElement[] = []
+          data["results"].forEach(element => {
+            if (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id)) {
+              tmp.push(element)
+            }
+          });
+          this.filteredDevicesDatase = new MatTableDataSource(tmp);
+
+          this.filteredDevicesDatase.paginator = this.paginator;
+          this.loading = false;
+        },
+        error: error => {
+          var message: string = "There was an error... "
+          if ("error" in error) { message += error["error"]["message"] }
+          this.openError(message)
+        }
+      })
 
     }
   }
@@ -145,7 +147,7 @@ export class DashboardComponent implements OnInit {
   }
   parseMap(data) {
     if (data.maps.length > 0) {
-      this.maps = this.sortList(data.maps, "name");    
+      this.maps = this.sortList(data.maps, "name");
     }
     this.topBarLoading = false;
     this.map_id = "__any__";
@@ -161,7 +163,7 @@ export class DashboardComponent implements OnInit {
     this.getDevices()
   }
 
-  locate(device:DeviceElement): void{
+  locate(device: DeviceElement): void {
     if (device.isLocating == true) {
       this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
         next: data => device.isLocating = false,
