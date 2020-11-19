@@ -22,7 +22,10 @@ export class OrgComponent implements OnInit {
   orgs = [];
   sites = [];
   role: string = "";
-  selected_org_obj = null;
+  selected_org_obj = {
+    id:"",
+    name:""
+  };
   org_id: string = "";
   site_name: string = "";
   me: string = "";
