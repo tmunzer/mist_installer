@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, Validators } from '@angular/forms';
 
 import { MatPaginator } from '@angular/material/paginator';
 
@@ -9,6 +8,7 @@ import { ClaimDialog } from '../common/common-claim';
 import { UnclaimDialog } from '../common/common-unclaim';
 import { ErrorDialog } from '../common/common-error';
 
+import * as L from 'leaflet';
 
 import { ConnectorService } from '../connector.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,17 +21,28 @@ export interface DeviceElement {
   connected: boolean;
   type: string;
   deviceprofile_name: string;
-  height: number;
+  height: Int16Array;
   map_id: string;
   map_name: string;
   name: string;
-  orientation: number;
+  orientation: Int16Array;
   site_id: string;
   site_name: string;
-  x: number;
-  y: number;
+  x: Int16Array;
+  y: Int16Array;
   isLocating: boolean;
-  isSelected: boolean
+}
+
+export interface MapElement {
+  width_m: number,
+  name: string,
+  width: number,
+  height_m: number,
+  ppm: number,
+  height: number,
+  type: string,
+  url: string,
+  thumbnail_url: string
 }
 
 export interface MistDevices {
@@ -41,24 +52,18 @@ export interface MistDevices {
   page: number;
 }
 
+
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: 'app-site',
+  templateUrl: './site.component.html',
+  styleUrls: ['./site.component.css']
 })
 
 
-export class DashboardComponent implements OnInit {
+export class SiteComponent implements OnInit {
 
-  frmDevice = this._formBuilder.group({
-    height: ["", Validators.min(0)],
-    map_id: [""],
-    name: [""],
-    orientation: [""],
-    site_name: [""],
-    x: [""],
-    y: [""]
-  })
+  private floorplan;
+  hideFloorplan: boolean = true;
 
   headers = {};
   cookies = {};
@@ -70,43 +75,39 @@ export class DashboardComponent implements OnInit {
   maps = [];
   org_id: string = "";
   role: string = "";
-  orgMode: boolean = false;
   site_name: string = "__any__";
   map_id: string = "__any__";
   device_type: string = ""
   me: string = "";
+  map: MapElement;
 
   claimButton: string = "To Site";
 
   topBarLoading = false;
   loading = false;
 
-  editingDevice = null;
 
   filteredDevicesDatase: MatTableDataSource<DeviceElement> | null;
   devices: DeviceElement[] = []
 
   resultsLength = 0;
-  displayedColumns: string[] = ["device"];//['mac', 'name', 'type', 'model', 'serial', 'connected', 'site_name', 'action']
+  displayedColumns: string[] = ['device']
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
-
-  //////////////////////////////////////////////////////////////////////////////
-  /////           INIT
-  //////////////////////////////////////////////////////////////////////////////
+  constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
+    this.hideFloorplan = false;
+    this.initMap()
     this._appService.headers.subscribe(headers => this.headers = headers)
     this._appService.cookies.subscribe(cookies => this.cookies = cookies)
     this._appService.host.subscribe(host => this.host = host)
     this._appService.self.subscribe(self => this.self = self || {})
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
-    this._appService.site_name.subscribe(site_name => this.site_name = site_name)
     this._appService.sites.subscribe(sites => this.sites = sites)
+    this._appService.site_name.subscribe(site_name => this.site_name = site_name)
     this._appService.role.subscribe(role => this.role = role)
-    this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
     this.getDevices();
     if (this.site_name) {
@@ -115,9 +116,38 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  //////////////////////////////////////////////////////////////////////////////
-  /////           LOAD MAP LIST
-  //////////////////////////////////////////////////////////////////////////////
+  getDevices() {
+    var body = null
+    if (this.site_name == "__any__" || this.site_name == "") {
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type, role: this.role }
+    } else if (this.site_name) {
+      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type, role: this.role }
+    }
+    if (body) {
+      this.loading = true;
+      this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
+        next: data => {
+          console.log(data)
+          var tmp: DeviceElement[] = []
+          data["results"].forEach(element => {
+            if (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id)) {
+              tmp.push(element)
+            }
+          });
+          this.filteredDevicesDatase = new MatTableDataSource(tmp);
+
+          this.filteredDevicesDatase.paginator = this.paginator;
+          this.loading = false;
+        },
+        error: error => {
+          var message: string = "There was an error... "
+          if ("error" in error) { message += error["error"]["message"] }
+          this.openError(message)
+        }
+      })
+
+    }
+  }
 
   getMaps() {
     this.topBarLoading = true;
@@ -151,102 +181,10 @@ export class DashboardComponent implements OnInit {
     this.getDevices()
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  /////           LOAD DEVICE LIST
-  //////////////////////////////////////////////////////////////////////////////
-
-  getDevices() {
-    var body = null
-    if (this.site_name == "__any__" || this.site_name == "") {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, full: true, type: this.device_type, role: this.role }
-    } else if (this.site_name) {
-      body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type, role: this.role }
-    }
-    if (body) {
-      this.loading = true;
-      this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
-        next: data => {
-          var tmp: DeviceElement[] = []
-          data["results"].forEach(element => {
-            if (!this.site_name || (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id))) {
-              tmp.push(element)
-            }
-          });
-          this.filteredDevicesDatase = new MatTableDataSource(tmp);
-
-          this.filteredDevicesDatase.paginator = this.paginator;
-          this.loading = false;
-        },
-        error: error => {
-          var message: string = "There was an error... "
-          if ("error" in error) { message += error["error"]["message"] }
-          this.openError(message)
-        }
-      })
-
-    }
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  /////           EDIT DEVICE
-  //////////////////////////////////////////////////////////////////////////////
-  editDevice(device: DeviceElement): void {
-    this.editingDevice = device;
-    this.frmDevice.controls["height"].setValue(this.editingDevice.height)
-    this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
-    this.frmDevice.controls["name"].setValue(this.editingDevice.name)
-    this.frmDevice.controls["site_name"].setValue(this.editingDevice.site_name)
-    this.frmDevice.controls["x"].setValue(this.editingDevice.x)
-    this.frmDevice.controls["y"].setValue(this.editingDevice.y)
-    device.isSelected = true;
-  }
-
-  saveDevice(): void {
-    var body = {
-      host: this.host,
-      cookies: this.cookies,
-      headers: this.headers,
-      role: this.role,
-      org_id: this.org_id,
-      device: this.frmDevice.getRawValue(),
-      device_mac: this.editingDevice.mac
-    }
-    this._http.post<any>('/api/devices/provision/', body).subscribe({
-      next: data => {
-        this.getDevices()
-        this.openSnackBar("Device " + this.editingDevice.mac + " successfully provisioned", "Done")
-      },
-      error: error => {
-        var message: string = "Unable to save changes to Device " + this.editingDevice.mac + "... "
-        if ("error" in error) { message += error["error"]["message"] }
-        this.openError(message)
-      }
-    })
-  }
-  discardDevice(): void {
-    this.frmDevice = this._formBuilder.group({
-      height: ["", Validators.min(0)],
-      map_id: [""],
-      name: [""],
-      orientation: [""],
-      site_name: [""],
-      x: [""],
-      y: [""]
-    })
-    this.editingDevice = null;
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  /////           LOCATE DEVICE
-  //////////////////////////////////////////////////////////////////////////////
-  locate(): void {
-    var device = this.editingDevice
+  locate(device: DeviceElement): void {
     if (device.isLocating == true) {
       this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
-        next: data => {
-          this.openSnackBar("Location  of the Device " + this.editingDevice.mac + " stopped", "Done")
-          device.isLocating = false
-        },
+        next: data => device.isLocating = false,
         error: error => {
           var message: string = "There was an error... "
           if ("error" in error) {
@@ -257,10 +195,7 @@ export class DashboardComponent implements OnInit {
       })
     } else {
       this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
-        next: data => {
-          this.openSnackBar("Location  of the Device " + this.editingDevice.mac + " started", "Done")
-          device.isLocating = true
-        },
+        next: data => device.isLocating = true,
         error: error => {
           var message: string = "There was an error... "
           if ("error" in error) {
@@ -272,9 +207,30 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  /////           COMMON
-  //////////////////////////////////////////////////////////////////////////////
+  // MAP
+  private initMap(): void {
+    this.floorplan = L.map('map', {
+      crs: L.CRS.Simple,
+      //center: [-this.map.height/2, -this.map.width/2],
+      minZoom:-10,
+      maxZoom:5,
+      zoomSnap: 0.5,
+      maxBounds: [this.map.height, this.map.width]
+    });
+    var bounds = [[0, 0], [this.map.height, this.map.width]];
+    var image = L.imageOverlay(this.map.url, bounds).addTo(this.floorplan);
+    this.floorplan.panTo([this.map.height, this.map.width])
+    this.floorplan.fitBounds(bounds);
+    this.floorplan.on('click', function(e){
+      console.log(e)
+      var latlng = e.latlng;
+      var x = latlng.lat;
+      var y = latlng.lng;
+      console.log("You clicked the map at x: " + x + " and y: " + y);
+      });
+  }
+
+  // COMMON
   sortList(data, attribute) {
     return data.sort(function (a, b) {
       var nameA = a[attribute].toUpperCase(); // ignore upper and lowercase
@@ -298,15 +254,16 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  /////           DIALOG BOXES
-  //////////////////////////////////////////////////////////////////////////////
+
+  // DIALOG BOXES
   // ERROR
   openError(message: string): void {
     const dialogRef = this._dialog.open(ErrorDialog, {
       data: message
     });
   }
+
+
 
 
   // CREATE DIALOG
@@ -325,14 +282,14 @@ export class DashboardComponent implements OnInit {
       data: { body: body }
     })
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      console.log(this.site_name)
       this.getDevices()
     })
   }
 
-
   // DELETE DIALOG
-  openDelete(): void {
-    var device = this.editingDevice;
+  openDelete(device: DeviceElement): void {
     const dialogRef = this._dialog.open(UnclaimDialog, {
       data: device
     });
@@ -351,12 +308,11 @@ export class DashboardComponent implements OnInit {
         }
         this._http.post<any>('/api/devices/unclaim/', body).subscribe({
           next: data => {
-            this.editingDevice = null;
             this.getDevices()
-            this.openSnackBar("Device " + device.mac + " successfully deleted", "Done")
+            this.openSnackBar("Device " + device.mac + " successfully unprovisionned", "Done")
           },
           error: error => {
-            var message: string = "Unable to delete the device " + device.mac + "... "
+            var message: string = "Unable to unprovision the device " + device.mac + "... "
             if ("error" in error) { message += error["error"]["message"] }
             this.openError(message)
           }

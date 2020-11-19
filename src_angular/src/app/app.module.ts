@@ -34,20 +34,25 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { TwoFactorDialog } from './login/login-2FA';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ClaimDialog } from './dashboard/dashboard-claim';
-import { UnclaimDialog } from './dashboard/dashboard-unclaim';
-import { DeviceDialog } from './dashboard/dashboard-device';
-import { ErrorDialog } from './dashboard/dashboard-error';
-import { WarningDialog } from './dashboard/dashboard-warning';
-import { ClaimDetailsDialog } from './dashboard/dashboard-claim-details';
+import { ClaimDialog } from './common/common-claim';
+import { UnclaimDialog } from './common/common-unclaim';
+import { ErrorDialog } from './common/common-error';
+import { WarningDialog } from './common/common-warning';
+import { ClaimDetailsDialog } from './common/common-claim-details';
 import { OrgComponent } from './org/org.component';
+import { SiteComponent } from './site/site.component';
+import { MapComponent } from './map/map.component';
+import { CommonComponent } from './common/common.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent, TwoFactorDialog,
-    DashboardComponent, ClaimDialog, UnclaimDialog, DeviceDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog,
-    OrgComponent
+    DashboardComponent, ClaimDialog, UnclaimDialog, ErrorDialog, WarningDialog, ClaimDetailsDialog,
+    OrgComponent,
+    SiteComponent,
+    MapComponent,
+    CommonComponent,
   ],
   imports: [
     BrowserModule,

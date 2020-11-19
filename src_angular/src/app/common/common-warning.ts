@@ -8,8 +8,8 @@ export interface WarningData {
 }
 
 @Component({
-    selector: 'dashboard-warning',
-    templateUrl: 'dashboard-warning.html',
+    selector: 'common-warning',
+    templateUrl: 'common-warning.html',
 })
 export class WarningDialog {
 

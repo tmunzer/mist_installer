@@ -18,7 +18,7 @@
                 <mat-label style="vertical-align: top;display: inline-block;line-height: 24px; margin-right: 8px;">Installer View</mat-label>
                 <mat-slide-toggle [checked]="adminMode" (change)="changeRole($event)">Admin View</mat-slide-toggle>
             </div>
-            <button mat-raised-button color="accent" class="create" style="margin: auto 20px auto auto" (click)="gotoDash()" [disabled]="claimDisabled">
+            <button mat-raised-button color="accent" class="create" style="margin: auto 20px auto auto" (click)="setOrg()" [disabled]="claimDisabled">
                 <mat-icon class="material-icons" style="margin: auto 10px auto auto;">add</mat-icon>
                 <span>Claim Device to Org</span>
             </button>

@@ -151,6 +151,7 @@ class Devices(Common):
                     data[key]=body["device"][key]
                 elif key != "site_id":
                     data[key]=""
+            print(data)
             try:
                 url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}".format(
                     body["host"], body["org_id"], body["device_mac"])

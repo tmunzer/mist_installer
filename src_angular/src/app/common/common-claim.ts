@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { ErrorDialog } from './dashboard-error';
-import { ClaimDetailsDialog } from './dashboard-claim-details'
+import { ErrorDialog } from './common-error';
+import { ClaimDetailsDialog } from './common-claim-details'
 
 export interface ClaimCodeElement {
     code: string;
@@ -14,8 +14,8 @@ export interface ClaimCodeElement {
 }
 
 @Component({
-    selector: 'dashboard-claim',
-    templateUrl: 'dashboard-claim.html',
+    selector: 'common-claim',
+    templateUrl: 'common-claim.html',
 })
 export class ClaimDialog {
     constructor(

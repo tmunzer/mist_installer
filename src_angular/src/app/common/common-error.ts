@@ -6,8 +6,8 @@ export interface ErrorData {
 }
 
 @Component({
-    selector: 'dashboard-error',
-    templateUrl: 'dashboard-error.html',
+    selector: 'common-error',
+    templateUrl: 'common-error.html',
 })
 export class ErrorDialog {
 

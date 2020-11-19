@@ -19,8 +19,8 @@ export interface DeviceElement {
   }
 
 @Component({
-    selector: 'dashboard-unclaim',
-    templateUrl: 'dashboard-unclaim.html',
+    selector: 'common-unclaim',
+    templateUrl: 'common-unclaim.html',
 })
 export class UnclaimDialog {
 

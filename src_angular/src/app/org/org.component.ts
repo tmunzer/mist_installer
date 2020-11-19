@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 import { ConnectorService } from '../connector.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorDialog } from './../dashboard/dashboard-error';
+import { ErrorDialog } from './../common/common-error';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,6 +21,7 @@ export class OrgComponent implements OnInit {
   orgs = [];
   sites = [];
   role: string = "";
+  orgMode: boolean = false;
   selected_org_obj = {
     id:"",
     name:"",
@@ -55,9 +55,6 @@ export class OrgComponent implements OnInit {
     this._appService.cookies.subscribe(cookies => this.cookies = cookies)
     this._appService.host.subscribe(host => this.host = host)
     this._appService.self.subscribe(self => this.self = self || {})
-    this._appService.org_id.subscribe(org_id => this.org_id = org_id)
-    this._appService.site_name.subscribe(site_name => this.site_name = site_name)
-    this._appService.role.subscribe(role => this.role = role)
     this.me = this.self["email"] || null
     var tmp_orgs: string[] = []
     if (this.self != {} && this.self["privileges"]) {
@@ -150,16 +147,23 @@ export class OrgComponent implements OnInit {
 
 
   // ROUTING FUNCTION
+  setOrg():void {
+    this.orgMode = true;
+    this.gotoDash();
+  }
   setSite(site): void {
     if (site != null) {
       this.site_name = site.name;
     } else {
       this.site_name = "";
     }
+    this.orgMode = true;
     this._appService.siteNameSet(this.site_name);
     this.gotoDash();
   }
   gotoDash(): void {
+    this._appService.sitesSet(this.sites);
+    this._appService.orgModeSet(this.orgMode)
     this._appService.roleSet(this.role)
     this._appService.orgIdSet(this.org_id);
     this._router.navigate(["/dashboard"]);
