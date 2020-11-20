@@ -60,6 +60,8 @@ export class OrgComponent implements OnInit {
 
     var tmp_orgs: string[] = []
 
+    // parsing all the orgs/sites from the privileges
+    // only orgs with admin/write/installer roles are used
     if (this.self != {} && this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
         if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
@@ -95,6 +97,9 @@ export class OrgComponent implements OnInit {
     }
   }
 
+  // when the user selects a new org
+  // disabling the admin mode
+  // and loading the sites
   changeOrg() {
     this.adminMode = false;
     if (this.selected_org_obj.role == "admin") {
@@ -105,6 +110,7 @@ export class OrgComponent implements OnInit {
     this.loadSites();
   }
 
+  // loads the org sites
   loadSites() {
     this.org_id = this.selected_org_obj.id
     if (this.adminMode == true) {
@@ -127,6 +133,8 @@ export class OrgComponent implements OnInit {
       }
     })
   }
+
+  // parse the org sites from HTTP response
   parseSites(data) {
     if (data.sites.length > 0) {
       this.noSiteToDisplay = false;
@@ -138,11 +146,14 @@ export class OrgComponent implements OnInit {
     this.topBarLoading = false;
   }
 
+  // when changing the mode from/to admin
+  // reload the sites with the new mode
   changeRole(event) {
     this.adminMode = event.checked;
     this.loadSites();
   }
 
+  // enable/disable the installer access for a specific site
   changeInstaller(site, enabled): void {
     this.topBarLoading = true
     this._http.post<any>('/api/sites/installer/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: site.id, enabled: enabled }).subscribe({
@@ -163,10 +174,12 @@ export class OrgComponent implements OnInit {
 
 
   // ROUTING FUNCTION
+  // used when user wants to claim devices to org
   setOrg(): void {
     this.orgMode = true;
-    this.gotoDash();
+    this.gotoDash();    
   }
+  // used when user wants to claim devices to site
   setSite(site): void {
     if (site != null) {
       this.site_name = site.name;
@@ -177,6 +190,7 @@ export class OrgComponent implements OnInit {
     this._appService.siteNameSet(this.site_name);
     this.gotoDash();
   }
+  // publish variables and go to the dashboard
   gotoDash(): void {
     this._appService.sitesSet(this.sites);
     this._appService.orgModeSet(this.orgMode)
