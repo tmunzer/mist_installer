@@ -27,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -76,6 +77,7 @@ import { CommonComponent } from './common/common.component';
     MatTableModule,
     MatCheckboxModule,
     MatProgressBarModule,
+    MatToolbarModule,
     MatTooltipModule,
     MatPaginatorModule,
     MatDialogModule,

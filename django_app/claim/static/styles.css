@@ -2923,7 +2923,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     z-index: -1;
     height: 100%;
     width: 100%;
-    background-color: #0e62ad;
+    background-color: rgb(236 236 236);
     /* 
     opacity: 0.6; 
     background-image: url(assets/img/main3.png);

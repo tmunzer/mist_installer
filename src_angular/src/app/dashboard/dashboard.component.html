@@ -71,7 +71,7 @@
                         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"></mat-paginator>
                     </div>
                 </div>
-                <div fxLayout="column" fxLayoutAlign="center stretch" fxFlex>
+                <div fxLayout="column" fxLayoutAlign="center stretch" fxFlex class="mat-elevation-z2">
                     <div *ngIf="!editingDevice" style="text-align: center;font-size: large;color: gray;">
                         Please select a device...
                     </div>
@@ -169,7 +169,7 @@
                             </form>
                         </div>
                         <div mat-dialog-actions style="justify-content: space-around;" fxLayout="row">
-                            <button mat-button (click)="discardDevice()">Close</button>
+                            <button mat-raised-button (click)="discardDevice()">Close</button>
                             <button mat-raised-button color="accent" (click)="saveDevice()" [disabled]="frmDevice.invalid">Update</button>
                         </div>
                     </div>
