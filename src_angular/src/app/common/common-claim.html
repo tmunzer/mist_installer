@@ -61,7 +61,7 @@
 <h1 mat-dialog-title>Claim new devices</h1>
 <div mat-dialog-content fxLayout="column">
     <div style="margin: 0 1em 1em; color: gray; font-size: small">HINT: you can paste mutliple claim codes separated by a SPACE, a COMMA or a SEMICOLUMN</div>
-    <div fxLayout="row" fxFill style="padding: 0 2em">
+    <div *ngIf="!isDone" fxLayout="row" fxFill style="padding: 0 2em">
         <mat-form-field fxFill>
             <mat-label>Claim Code</mat-label>
             <input matInput placeholder="ABCDE-12345-F6G7H" (keydown.enter)="add()" [(ngModel)]="inputClaimCodes" cdkFocusInitial>
