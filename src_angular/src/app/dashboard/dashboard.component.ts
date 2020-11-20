@@ -109,15 +109,6 @@ export class DashboardComponent implements OnInit {
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
-    this.cookies = null
-    this.headers = {
-      Authorization: "Token zT61nhtDu66dGlEhxyAgcGFVEWipg3w4fkbqzPvO8LrpfIufe1Ops4VIeKNFBTB4S6bcTLTAjl80kTldzI4G1NWRoI7GDXRo",
-      "Content-Type": "application/json"
-    }
-    this.host = "api.mist.com"
-    this.org_id = "203d3d02-dbc0-4c1b-9f41-76896a3330f4"
-    this.role = "installer"
-
 
     if (this.sites.length == 0) {
       this.loadSites()
