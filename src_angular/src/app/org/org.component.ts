@@ -23,8 +23,8 @@ export class OrgComponent implements OnInit {
   role: string = "";
   orgMode: boolean = false;
   selected_org_obj = {
-    id:"",
-    name:"",
+    id: "",
+    name: "",
     role: ""
   };
   org_id: string = "";
@@ -55,8 +55,11 @@ export class OrgComponent implements OnInit {
     this._appService.cookies.subscribe(cookies => this.cookies = cookies)
     this._appService.host.subscribe(host => this.host = host)
     this._appService.self.subscribe(self => this.self = self || {})
+    this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this.me = this.self["email"] || null
+
     var tmp_orgs: string[] = []
+
     if (this.self != {} && this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
         if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
@@ -74,11 +77,24 @@ export class OrgComponent implements OnInit {
         }
       });
       this.orgs = this.sortList(this.orgs, "name");
-      if (this.orgs.length == 1) {
-        this.org_id = this.orgs[1]["id"]
-      }
+    }
+
+    // if only one, using it by default
+    if (!this.org_id && this.orgs.length == 1) {
+      this.org_id = this.orgs[1]["id"]
+    }
+    // if back button used, retrieving previously selected org
+    // or if only one org, loading it automatically
+    if (this.org_id) {
+      this.orgs.forEach(element => {
+        if (element.id == this.org_id) {
+          this.selected_org_obj = element;
+          this.changeOrg();
+        }
+      })
     }
   }
+
   changeOrg() {
     this.adminMode = false;
     if (this.selected_org_obj.role == "admin") {
@@ -147,7 +163,7 @@ export class OrgComponent implements OnInit {
 
 
   // ROUTING FUNCTION
-  setOrg():void {
+  setOrg(): void {
     this.orgMode = true;
     this.gotoDash();
   }

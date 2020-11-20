@@ -7,7 +7,7 @@
                     <mat-select-trigger>
                         {{selected_org_obj.name}}
                     </mat-select-trigger>
-                    <mat-option *ngFor="let org of orgs " [value]="org" aria-label="test">
+                    <mat-option *ngFor="let org of orgs" [value]="org">
                         <span style="margin-right: 1em; background-color: lightgray; border-radius: 14px; padding: 5px; font-size: smaller;">{{org.role}}</span>
                         <span>{{org.name}}</span>
                     </mat-option>

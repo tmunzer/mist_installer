@@ -306,7 +306,7 @@ export class DashboardComponent implements OnInit {
   }
 
   back():void{
-    this._router.navigate(["/dashboard"]);
+    this._router.navigate(["/select"]);
   }
 
   //////////////////////////////////////////////////////////////////////////////
