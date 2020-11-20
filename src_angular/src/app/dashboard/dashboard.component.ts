@@ -55,8 +55,8 @@ export class DashboardComponent implements OnInit {
     height: ["", Validators.min(0)],
     map_id: [""],
     name: [""],
-    orientation: [""],
     site_name: [""],
+    orientation: ["", [Validators.min(0), Validators.max(360)]],
     x: [""],
     y: [""]
   })
@@ -109,6 +109,14 @@ export class DashboardComponent implements OnInit {
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
+    this.cookies = null
+    this.headers = {
+      Authorization: "Token zT61nhtDu66dGlEhxyAgcGFVEWipg3w4fkbqzPvO8LrpfIufe1Ops4VIeKNFBTB4S6bcTLTAjl80kTldzI4G1NWRoI7GDXRo",
+      "Content-Type": "application/json"
+    }
+    this.host = "api.mist.com"
+    this.org_id = "203d3d02-dbc0-4c1b-9f41-76896a3330f4"
+    this.role = "installer"
     this.getDevices();
     if (this.site_name) {
       this.getMaps();
@@ -192,19 +200,19 @@ export class DashboardComponent implements OnInit {
   /////           EDIT DEVICE
   //////////////////////////////////////////////////////////////////////////////
   editDevice(device: DeviceElement): void {
-    if (device == this.editingDevice){
+    if (device == this.editingDevice) {
       this.discardDevice();
       device.isSelected = true;
     }
     else {
-    this.editingDevice = device;
-    this.frmDevice.controls["height"].setValue(this.editingDevice.height)
-    this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
-    this.frmDevice.controls["name"].setValue(this.editingDevice.name)
-    this.frmDevice.controls["site_name"].setValue(this.editingDevice.site_name)
-    this.frmDevice.controls["x"].setValue(this.editingDevice.x)
-    this.frmDevice.controls["y"].setValue(this.editingDevice.y)
-    device.isSelected = true;
+      this.editingDevice = device;
+      this.frmDevice.controls["height"].setValue(this.editingDevice.height)
+      this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
+      this.frmDevice.controls["name"].setValue(this.editingDevice.name)
+      this.frmDevice.controls["site_name"].setValue(this.editingDevice.site_name)
+      this.frmDevice.controls["x"].setValue(this.editingDevice.x)
+      this.frmDevice.controls["y"].setValue(this.editingDevice.y)
+      device.isSelected = true;
     }
   }
 
@@ -305,7 +313,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  back():void{
+  back(): void {
     this._router.navigate(["/select"]);
   }
 

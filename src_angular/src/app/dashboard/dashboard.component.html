@@ -100,6 +100,8 @@
                                     <input matInput disabled [ngModel]="editingDevice.mac" />
                                 </mat-form-field>
                             </div>
+
+
                             <form [formGroup]="frmDevice" class="create-form" fxLayout="column">
                                 <mat-form-field appearance="outline">
                                     <mat-label>NAME</mat-label>
@@ -127,17 +129,21 @@
 
                                     <mat-form-field appearance="outline">
                                         <mat-label>HEIGHT</mat-label>
-                                        <input matInput formControlName="height" />
+                                        <input matInput formControlName="height" type="number" min="0" />
+                                    </mat-form-field>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>ORIENTATION</mat-label>
+                                        <input matInput type="number" formControlName="orientation" min="0" max="360" />
                                     </mat-form-field>
 
                                     <mat-form-field appearance="outline">
                                         <mat-label>X POSITION</mat-label>
-                                        <input matInput formControlName="x" />
+                                        <input matInput formControlName="x" type="number" />
                                     </mat-form-field>
 
                                     <mat-form-field appearance="outline">
                                         <mat-label>Y POSITION</mat-label>
-                                        <input matInput formControlName="y" />
+                                        <input matInput formControlName="y" type="number" />
                                     </mat-form-field>
                                 </div>
                             </form>
