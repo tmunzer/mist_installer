@@ -155,6 +155,8 @@ class Devices(Common):
             try:
                 url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}".format(
                     body["host"], body["org_id"], body["device_mac"])
+                print(url)
+                print(data)
                 resp = requests.put(
                     url, headers=extract["headers"], cookies=extract["cookies"], json=data)
                 return {"status": 200, "data": {"result": resp.json()}}

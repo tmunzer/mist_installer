@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { MatPaginator } from '@angular/material/paginator';
@@ -52,13 +52,13 @@ export interface MistDevices {
 export class DashboardComponent implements OnInit {
 
   frmDevice = this._formBuilder.group({
-    height: ["", Validators.min(0)],
-    map_id: [""],
     name: [""],
     site_name: [""],
-    orientation: ["", [Validators.min(0), Validators.max(360)]],
-    x: [""],
-    y: [""]
+    map_id: [""],
+    height: ["2.75", Validators.min(0)],
+    orientation: ["0", [Validators.min(0), Validators.max(360)]],
+    x: ["0"],
+    y: ["0"]
   })
 
   headers = {};
@@ -117,20 +117,67 @@ export class DashboardComponent implements OnInit {
     this.host = "api.mist.com"
     this.org_id = "203d3d02-dbc0-4c1b-9f41-76896a3330f4"
     this.role = "installer"
+
+
+    if (this.sites.length == 0) {
+      this.loadSites()
+    }
     this.getDevices();
     if (this.site_name) {
-      this.getMaps();
+      this.getMaps(this.site_name);
     }
+
+    this.onChanges()
   }
 
 
   //////////////////////////////////////////////////////////////////////////////
+  /////           SITE MGMT
+  //////////////////////////////////////////////////////////////////////////////
+  // when a device is assigned to a site
+  changeSite(): void {
+    this.frmDevice.controls["map_id"].setValue("")
+    if (this.frmDevice.value.site_name){
+      this.getMaps(this.frmDevice.value.site_name);
+    }
+    console.log(this.editingDevice)
+    console.log(this.frmDevice)
+  }
+
+  // loads the org sites
+  loadSites() {
+    console.log('test')
+    this.org_id = this.org_id
+    this.topBarLoading = true;
+    this.sites = [];
+    this._http.post<any>('/api/sites/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, role: this.role }).subscribe({
+      next: data => this.parseSites(data),
+      error: error => {
+        var message: string = "There was an error... "
+        if ("error" in error) {
+          message += error["error"]["message"]
+        }
+        this.topBarLoading = false;
+        this.openError(message)
+      }
+    })
+  }
+
+  // parse the org sites from HTTP response
+  parseSites(data) {
+    if (data.sites.length > 0) {
+      this.sites = this.sortList(data.sites, "name");
+    }
+    this.topBarLoading = false;
+  }
+  //////////////////////////////////////////////////////////////////////////////
   /////           LOAD MAP LIST
   //////////////////////////////////////////////////////////////////////////////
 
-  getMaps() {
+  getMaps(site_name: string) {
     this.topBarLoading = true;
-    this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, role: this.role }).subscribe({
+
+    this._http.post<any>('/api/maps/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: site_name, role: this.role }).subscribe({
       next: data => this.parseMap(data),
       error: error => {
         var message: string = "There was an error... "
@@ -199,19 +246,58 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           EDIT DEVICE
   //////////////////////////////////////////////////////////////////////////////
+
+  onChanges() {
+    this.frmDevice.get('site_name').valueChanges
+      .subscribe(site_name => {
+        console.log("change")
+        console.log(site_name)
+        this.checkSiteName(site_name)
+      });
+  }
+
+  checkSiteName(site_name: string): void {
+    console.log(site_name)
+    if (!site_name) {
+      console.log("disable")
+      this.frmDevice.controls["height"].disable();
+      this.frmDevice.controls["map_id"].disable();
+      this.frmDevice.controls["name"].disable();
+      this.frmDevice.controls["orientation"].disable();
+      this.frmDevice.controls["x"].disable();
+      this.frmDevice.controls["y"].disable();
+    }
+    else {
+      console.log("enable")
+      this.frmDevice.controls["height"].enable();
+      this.frmDevice.controls["map_id"].enable();
+      this.frmDevice.controls["name"].enable();
+      this.frmDevice.controls["orientation"].enable();
+      this.frmDevice.controls["x"].enable();
+      this.frmDevice.controls["y"].enable();
+    }
+
+  }
+
   editDevice(device: DeviceElement): void {
     if (device == this.editingDevice) {
       this.discardDevice();
       device.isSelected = true;
     }
     else {
+      console.log(device)
       this.editingDevice = device;
-      this.frmDevice.controls["height"].setValue(this.editingDevice.height)
       this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
       this.frmDevice.controls["name"].setValue(this.editingDevice.name)
       this.frmDevice.controls["site_name"].setValue(this.editingDevice.site_name)
+      this.frmDevice.controls["height"].setValue(this.editingDevice.height)
+      this.frmDevice.controls["orientation"].setValue(this.editingDevice.orientation)
       this.frmDevice.controls["x"].setValue(this.editingDevice.x)
       this.frmDevice.controls["y"].setValue(this.editingDevice.y)
+      this.checkSiteName(this.frmDevice.value.site_name)
+      if (this.editingDevice.site_name) {
+        this.getMaps(this.editingDevice.site_name)
+      }
       device.isSelected = true;
     }
   }
