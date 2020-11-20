@@ -77,7 +77,7 @@
                     </div>
                     <div *ngIf="editingDevice" fxFlex fxLayout="column" style="margin:3em">
                         <div mat-dialog-content fxLayout="column">
-                            <div fxLayout="row" fxLayoutAlign="space-between stretch">
+                            <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
                                 <div fxLayout="column" fxLayoutAlign="center center" style="margin-bottom: 2em;">
                                     <mat-slide-toggle [checked]="editingDevice.isLocating" (change)="locate()" [disabled]="!editingDevice.connected">
                                         Locate
@@ -100,7 +100,7 @@
 
 
                             <mat-divider inset="true" style="margin-bottom: 1em;"></mat-divider>
-                            <div fxLayout="row" fxLayoutAlign="space-between stretch">
+                            <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
                                 <mat-form-field appearance="outline">
                                     <mat-label>TYPE</mat-label>
                                     <input matInput disabled [ngModel]="editingDevice.type" />
@@ -131,10 +131,10 @@
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field appearance="outline">
-                                    <mat-label>FLOORPLAN</mat-label>
+                                    <mat-label>FLOORPLAN (only floorplan with image can be used)</mat-label>
                                     <mat-select formControlName="map_id">
                                         <mat-option value="">No FloorPlan</mat-option>
-                                        <mat-option *ngFor="let map of maps " [value]="map.id">
+                                        <mat-option *ngFor="let map of maps" [value]="map.id">
                                             {{map.name}}
                                         </mat-option>
                                     </mat-select>
@@ -145,7 +145,7 @@
                                     <mat-label>NAME</mat-label>
                                     <input matInput formControlName="name" cdkFocusInitial />
                                 </mat-form-field>
-                                <div fxLayout="row" fxLayoutAlign="space-between stretch">
+                                <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
 
                                     <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>HEIGHT</mat-label>
@@ -185,7 +185,7 @@
             </div>
         </div>
     </div>
+    <div fxLayou="row" fxLayoutAlign="start center" style="margin-top: 1em;">
+        <button mat-raised-button color="accent" (click)="back()">Back</button>
+    </div>
 </mat-card>
-<div fxLayou="row" fxLayoutAlign="start center" style="margin-left: 1em;">
-    <button mat-raised-button color="accent" (click)="back()">Back</button>
-</div>
