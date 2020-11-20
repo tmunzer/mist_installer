@@ -48,7 +48,8 @@
                                 <td mat-cell *matCellDef="let element" [ngClass]="{selected: editingDevice && element.mac === editingDevice.mac}">
                                     <a role="button" (click)="editDevice(element)" class="device" fxLayout="row" fxLayoutAlign="space-between stretch" style="cursor: pointer;">
                                         <div fxLayout="row" fxLayoutAlign="center center">
-                                            <mat-icon aria-hidden="false" style="color: green">check_circle</mat-icon>
+                                            <mat-icon *ngIf="element.connected" aria-hidden="false" style="color: green">check_circle</mat-icon>
+                                            <mat-icon *ngIf="!element.connected" aria-hidden="false" style="color: red">cancel</mat-icon>
                                         </div>
                                         <div fxLayout="row" fxLayoutAlign="scenter center" style="margin-left: 2em;">
                                             <div *ngIf="element.name">{{element.name}}
