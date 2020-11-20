@@ -140,13 +140,10 @@ export class DashboardComponent implements OnInit {
     if (this.frmDevice.value.site_name){
       this.getMaps(this.frmDevice.value.site_name);
     }
-    console.log(this.editingDevice)
-    console.log(this.frmDevice)
   }
 
   // loads the org sites
   loadSites() {
-    console.log('test')
     this.org_id = this.org_id
     this.topBarLoading = true;
     this.sites = [];
@@ -250,16 +247,12 @@ export class DashboardComponent implements OnInit {
   onChanges() {
     this.frmDevice.get('site_name').valueChanges
       .subscribe(site_name => {
-        console.log("change")
-        console.log(site_name)
         this.checkSiteName(site_name)
       });
   }
 
   checkSiteName(site_name: string): void {
-    console.log(site_name)
     if (!site_name) {
-      console.log("disable")
       this.frmDevice.controls["height"].disable();
       this.frmDevice.controls["map_id"].disable();
       this.frmDevice.controls["name"].disable();
@@ -268,7 +261,6 @@ export class DashboardComponent implements OnInit {
       this.frmDevice.controls["y"].disable();
     }
     else {
-      console.log("enable")
       this.frmDevice.controls["height"].enable();
       this.frmDevice.controls["map_id"].enable();
       this.frmDevice.controls["name"].enable();
@@ -285,7 +277,6 @@ export class DashboardComponent implements OnInit {
       device.isSelected = true;
     }
     else {
-      console.log(device)
       this.editingDevice = device;
       this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
       this.frmDevice.controls["name"].setValue(this.editingDevice.name)
