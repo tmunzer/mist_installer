@@ -147,21 +147,21 @@
                                 </mat-form-field>
                                 <div fxLayout="row" fxLayoutAlign="space-between stretch">
 
-                                    <mat-form-field *ngIf="editingDevice.type==ap" appearance="outline">
+                                    <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>HEIGHT</mat-label>
                                         <input matInput formControlName="height" type="number" min="0" />
                                     </mat-form-field>
-                                    <mat-form-field *ngIf="editingDevice.type==ap" appearance="outline">
+                                    <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>ORIENTATION</mat-label>
                                         <input matInput type="number" formControlName="orientation" min="0" max="360" />
                                     </mat-form-field>
 
-                                    <mat-form-field *ngIf="editingDevice.type==ap" appearance="outline">
+                                    <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>X POSITION</mat-label>
                                         <input matInput formControlName="x" type="number" />
                                     </mat-form-field>
 
-                                    <mat-form-field *ngIf="editingDevice.type==ap" appearance="outline">
+                                    <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>Y POSITION</mat-label>
                                         <input matInput formControlName="y" type="number" />
                                     </mat-form-field>

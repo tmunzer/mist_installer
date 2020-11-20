@@ -109,7 +109,6 @@ export class DashboardComponent implements OnInit {
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
-
     if (this.sites.length == 0) {
       this.loadSites()
     }
@@ -282,6 +281,7 @@ export class DashboardComponent implements OnInit {
       }
       device.isSelected = true;
     }
+    console.log(this.editingDevice)
   }
 
   saveDevice(): void {
