@@ -97,10 +97,10 @@
                             </div>
 
 
-                            <mat-divider inset="true" style="margin-bottom: 1em;"></mat-divider>
 
 
-                            <div fxLayout="row" fxLayoutAlign="space-between stretch">
+                            <div *ngIf="editingDevice.type==ap" fxLayout="row" fxLayoutAlign="space-between stretch">
+                                <mat-divider inset="true" style="margin-bottom: 1em;"></mat-divider>
                                 <mat-form-field appearance="outline">
                                     <mat-label>TYPE</mat-label>
                                     <input matInput disabled [ngModel]="editingDevice.type" />
