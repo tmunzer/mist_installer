@@ -142,7 +142,7 @@
                             </form>
                         </div>
                         <div mat-dialog-actions style="justify-content: space-around;" fxLayout="row">
-                            <button mat-button (click)="discardDevice()">Cancel</button>
+                            <button mat-button (click)="discardDevice()">Close</button>
                             <button mat-raised-button color="accent" (click)="saveDevice()" [disabled]="frmDevice.invalid">Update</button>
                         </div>
                     </div>
@@ -159,3 +159,6 @@
         </div>
     </div>
 </mat-card>
+<div fxLayou="row" fxLayoutAlign="start center">
+    <button mat-raised-button color="accent" (click)="back()">Back</button>
+</div>

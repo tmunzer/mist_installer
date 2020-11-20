@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { MatPaginator } from '@angular/material/paginator';
 
@@ -91,7 +92,7 @@ export class DashboardComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
+  constructor(private _router: Router, private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
 
   //////////////////////////////////////////////////////////////////////////////
   /////           INIT
@@ -191,6 +192,11 @@ export class DashboardComponent implements OnInit {
   /////           EDIT DEVICE
   //////////////////////////////////////////////////////////////////////////////
   editDevice(device: DeviceElement): void {
+    if (device == this.editingDevice){
+      this.discardDevice();
+      device.isSelected = true;
+    }
+    else {
     this.editingDevice = device;
     this.frmDevice.controls["height"].setValue(this.editingDevice.height)
     this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
@@ -199,6 +205,7 @@ export class DashboardComponent implements OnInit {
     this.frmDevice.controls["x"].setValue(this.editingDevice.x)
     this.frmDevice.controls["y"].setValue(this.editingDevice.y)
     device.isSelected = true;
+    }
   }
 
   saveDevice(): void {
@@ -296,6 +303,10 @@ export class DashboardComponent implements OnInit {
     if (this.filteredDevicesDatase.paginator) {
       this.filteredDevicesDatase.paginator.firstPage();
     }
+  }
+
+  back():void{
+    this._router.navigate(["/dashboard"]);
   }
 
   //////////////////////////////////////////////////////////////////////////////
