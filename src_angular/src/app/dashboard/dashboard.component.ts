@@ -178,7 +178,13 @@ export class DashboardComponent implements OnInit {
   }
   parseMap(data) {
     if (data.maps.length > 0) {
-      this.maps = this.sortList(data.maps, "name");
+      var tmp_list = []
+      data.maps.forEach(element => {
+        if (element.url) {
+          tmp_list.push(element)
+        }
+      });
+      this.maps = this.sortList(tmp_list, "name");
     }
     this.topBarLoading = false;
     this.map_id = "__any__";
