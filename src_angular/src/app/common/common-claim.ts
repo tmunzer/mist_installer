@@ -122,12 +122,12 @@ export class ClaimDialog {
                     // if code added to account
                     if (this.claimResult["added"].indexOf(element.code) >= 0) {
                         element.success = true;
-                    // if error when adding the code
+                        // if error when adding the code
                     } else if (this.claimResult["error"].indexOf(element.code) >= 0) {
                         index = this.claimResult["error"].indexOf(element.code);
                         element.success = false;
                         element.reason = this.claimResult["reason"][index]
-                    // if code already claimed somewhere
+                        // if code already claimed somewhere
                     } else if (this.claimResult["duplicated"].indexOf(element.code) >= 0) {
                         element.success = false;
                         element.reason = "Already Claimed"
@@ -149,7 +149,16 @@ export class ClaimDialog {
     cancel(): void {
         this.dialogRef.close();
     }
-// DIALOG BOXES
+    // DIALOG BOXES
+    // Restart Claim Process
+    reset(): void {
+        const dialogRef = this._dialog.open(ClaimDialog, {
+            data: { body: this.body }
+        })
+        dialogRef.afterClosed().subscribe(result => {
+            this.dialogRef.close();
+        })
+    }
     // DETAILS
     details(): void {
         console.log(this.claimResult);

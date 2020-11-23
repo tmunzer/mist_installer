@@ -102,8 +102,9 @@
 </div>
 
 <div mat-dialog-actions style="justify-content: space-around;" fxLayout="row">
-    <button mat-button (click)="cancel()">Cancel</button>
+    <button *ngIf="!isDone" mat-button (click)="cancel()">Cancel</button>
     <button *ngIf="!isDone" mat-raised-button color="accent" cdkFocusInitial (click)="confirm()" [disabled]="claimButtonDisabled">Claim</button>
+    <button *ngIf="isDone" mat-button (click)="reset()" [disabled]="isWorking">Reset</button>
     <button *ngIf="isDone" mat-raised-button color="accent" cdkFocusInitial (click)="details()" [disabled]="isWorking">View Details</button>
     <button *ngIf="isDone" mat-raised-button color="accent" cdkFocusInitial (click)="cancel()" [disabled]="isWorking">Done</button>
 </div>
