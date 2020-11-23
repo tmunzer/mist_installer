@@ -13,7 +13,8 @@ import { ErrorDialog } from '../common/common-error';
 
 import { ConnectorService } from '../connector.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { interval, Subscription } from 'rxjs';
 
 export interface DeviceElement {
   mac: string;
@@ -80,7 +81,6 @@ export class DashboardComponent implements OnInit {
   claimButton: string = "To Site";
 
   topBarLoading = false;
-  loading = false;
 
   editingDevice = null;
 
@@ -89,16 +89,19 @@ export class DashboardComponent implements OnInit {
 
   resultsLength = 0;
   displayedColumns: string[] = ["device"];//['mac', 'name', 'type', 'model', 'serial', 'connected', 'site_name', 'action']
-
+  private _subscription: Subscription
+  
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private _router: Router, private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
+  constructor(private _router: Router, private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar ) { }
 
   //////////////////////////////////////////////////////////////////////////////
   /////           INIT
   //////////////////////////////////////////////////////////////////////////////
 
   ngOnInit() {
+    const source = interval(60000);
+
     this._appService.headers.subscribe(headers => this.headers = headers)
     this._appService.cookies.subscribe(cookies => this.cookies = cookies)
     this._appService.host.subscribe(host => this.host = host)
@@ -109,6 +112,7 @@ export class DashboardComponent implements OnInit {
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
+
     if (this.sites.length == 0) {
       this.loadSites()
     }
@@ -118,9 +122,14 @@ export class DashboardComponent implements OnInit {
     }
 
     this.onChanges()
+
+    this._subscription = source.subscribe(s => {this.getDevices(); console.log("ref")});
+
   }
 
-
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
+  }
   //////////////////////////////////////////////////////////////////////////////
   /////           SITE MGMT
   //////////////////////////////////////////////////////////////////////////////
@@ -212,7 +221,7 @@ export class DashboardComponent implements OnInit {
       body = { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_name: this.site_name, full: true, type: this.device_type, role: this.role }
     }
     if (body) {
-      this.loading = true;
+      this.topBarLoading = true;
       this._http.post<DeviceElement[]>('/api/devices/', body).subscribe({
         next: data => {
           var tmp: DeviceElement[] = []
@@ -224,7 +233,7 @@ export class DashboardComponent implements OnInit {
           this.filteredDevicesDatase = new MatTableDataSource(tmp);
 
           this.filteredDevicesDatase.paginator = this.paginator;
-          this.loading = false;
+          this.topBarLoading = false;
         },
         error: error => {
           var message: string = "There was an error... "
