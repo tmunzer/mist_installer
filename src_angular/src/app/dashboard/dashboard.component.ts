@@ -32,8 +32,6 @@ export interface DeviceElement {
   site_name: string;
   x: number;
   y: number;
-  isLocating: boolean;
-  isSelected: boolean
 }
 
 export interface MistDevices {
@@ -83,6 +81,7 @@ export class DashboardComponent implements OnInit {
   topBarLoading = false;
 
   editingDevice = null;
+  locatingDevices = [];
 
   filteredDevicesDatase: MatTableDataSource<DeviceElement> | null;
   devices: DeviceElement[] = []
@@ -112,7 +111,6 @@ export class DashboardComponent implements OnInit {
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
 
-
     if (this.sites.length == 0) {
       this.loadSites()
     }
@@ -123,7 +121,7 @@ export class DashboardComponent implements OnInit {
 
     this.onChanges()
 
-    this._subscription = source.subscribe(s => {this.getDevices(); console.log("ref")});
+    this._subscription = source.subscribe(s => this.getDevices());
 
   }
 
@@ -228,6 +226,9 @@ export class DashboardComponent implements OnInit {
           data["results"].forEach(element => {
             if (!this.site_name || (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id))) {
               tmp.push(element)
+              if (this.editingDevice && this.editingDevice.mac == element.mac){
+                this.editingDevice = element;  
+              }
             }
           });
           this.filteredDevicesDatase = new MatTableDataSource(tmp);
@@ -279,24 +280,15 @@ export class DashboardComponent implements OnInit {
   editDevice(device: DeviceElement): void {
     if (device == this.editingDevice) {
       this.discardDevice();
-      device.isSelected = true;
     }
     else {
       this.editingDevice = device;
-      this.frmDevice.controls["map_id"].setValue(this.editingDevice.map_id)
-      this.frmDevice.controls["name"].setValue(this.editingDevice.name)
-      this.frmDevice.controls["site_name"].setValue(this.editingDevice.site_name)
-      this.frmDevice.controls["height"].setValue(this.editingDevice.height)
-      this.frmDevice.controls["orientation"].setValue(this.editingDevice.orientation)
-      this.frmDevice.controls["x"].setValue(this.editingDevice.x)
-      this.frmDevice.controls["y"].setValue(this.editingDevice.y)
+      this.updateFrmDeviceValues(this.editingDevice)
       this.checkSiteName(this.frmDevice.value.site_name)
       if (this.editingDevice.site_name) {
         this.getMaps(this.editingDevice.site_name)
       }
-      device.isSelected = true;
     }
-    console.log(this.editingDevice)
   }
 
   saveDevice(): void {
@@ -311,6 +303,7 @@ export class DashboardComponent implements OnInit {
     }
     this._http.post<any>('/api/devices/provision/', body).subscribe({
       next: data => {
+        this.updateFrmDeviceValues(data.result)
         this.getDevices()
         this.openSnackBar("Device " + this.editingDevice.mac + " successfully provisioned", "Done")
       },
@@ -338,12 +331,13 @@ export class DashboardComponent implements OnInit {
   /////           LOCATE DEVICE
   //////////////////////////////////////////////////////////////////////////////
   locate(): void {
-    var device = this.editingDevice
-    if (device.isLocating == true) {
-      this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
+    const device_mac = this.editingDevice.mac
+    const index = this.locatingDevices.indexOf(device_mac)
+    if (index >= 0) {
+      this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device_mac }).subscribe({
         next: data => {
           this.openSnackBar("Location  of the Device " + this.editingDevice.mac + " stopped", "Done")
-          device.isLocating = false
+          this.locatingDevices.splice(index, 1)          
         },
         error: error => {
           var message: string = "There was an error... "
@@ -354,10 +348,10 @@ export class DashboardComponent implements OnInit {
         }
       })
     } else {
-      this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device.mac }).subscribe({
+      this._http.post<any>('/api/devices/locate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device_mac }).subscribe({
         next: data => {
           this.openSnackBar("Location  of the Device " + this.editingDevice.mac + " started", "Done")
-          device.isLocating = true
+          this.locatingDevices.push(device_mac)
         },
         error: error => {
           var message: string = "There was an error... "
@@ -373,6 +367,17 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           COMMON
   //////////////////////////////////////////////////////////////////////////////
+  updateFrmDeviceValues(device):void {
+    this.frmDevice.controls["map_id"].setValue(device.map_id)
+    this.frmDevice.controls["name"].setValue(device.name)
+    this.frmDevice.controls["site_name"].setValue(device.site_name)
+    this.frmDevice.controls["height"].setValue(device.height)
+    this.frmDevice.controls["orientation"].setValue(device.orientation)
+    this.frmDevice.controls["x"].setValue(device.x)
+    this.frmDevice.controls["y"].setValue(device.y)
+  }
+
+
   sortList(data, attribute) {
     return data.sort(function (a, b) {
       var nameA = a[attribute].toUpperCase(); // ignore upper and lowercase
