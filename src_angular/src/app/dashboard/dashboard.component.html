@@ -79,7 +79,7 @@
                         <div mat-dialog-content fxLayout="column">
                             <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
                                 <div fxLayout="column" fxLayoutAlign="center center" style="margin-bottom: 2em;">
-                                    <mat-slide-toggle [checked]="editingDevice.isLocating" (change)="locate()" [disabled]="!editingDevice.connected">
+                                    <mat-slide-toggle [checked]="locatingDevices.indexOf(editingDevice.mac) >= 0" (change)="locate()" [disabled]="!editingDevice.connected || !editingDevice.site_name">
                                         Locate
                                     </mat-slide-toggle>
                                 </div>
@@ -93,7 +93,8 @@
                                         <div>Device is NOT CONNECTED to the Cloud</div>
                                     </div>
                                 </div>
-                                <button mat-button style="color: red; margin-bottom: 2em;" (click)="openDelete()">Delete</button>
+                                <button mat-button style="color: darkgray; margin-bottom: 2em;" *ngIf="!editingDevice.site_name">Delete</button>
+                                <button mat-button style="color: red; margin-bottom: 2em;" (click)="openDelete()" *ngIf="editingDevice.site_name">Delete</button>
                             </div>
 
 
