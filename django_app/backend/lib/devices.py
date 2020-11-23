@@ -180,20 +180,20 @@ class Devices(Common):
     def unlocate(self, body):
         body = self.get_body(body)
         if "org_id" in body:
-            return self._locate(body)
+            return self._unlocate(body)
         else:
             return {"status": 500, "data": {"message": "org_id missing"}}
 
     def _unlocate(self, body):
         extract = self.extractAuth(body)
         if "device_mac" in body:
-            #try:
+            try:
             url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}/unlocate".format(
                 body["host"], body["org_id"], body["device_mac"])
             resp = requests.post(
                 url, headers=extract["headers"], cookies=extract["cookies"])
             return {"status": 200, "data": {"result": resp.json()}}
-            #except:
-            #    return {"status": 500, "data": {"message": "unable to provision the device"}}
+            except:
+                return {"status": 500, "data": {"message": "unable to provision the device"}}
         else:
             return {"status": 500, "data": {"message": "device_mac missing"}}
