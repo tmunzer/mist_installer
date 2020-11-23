@@ -19,33 +19,25 @@ class Devices(Common):
     def _pull_inventory(self, body):
         try:
             extract = self.extractAuth(body)
-            if "full" in body and body["full"]:
-                limit = 1000
-                page = 1
-                results = []
-                total = 1
-                while len(results) < int(total) and int(page) < 50:
-                    url = "https://{0}/api/v1/installer/orgs/{1}/devices?limit={2}&page={3}".format(
-                        extract["host"], body["org_id"], limit, page)
-                    resp = requests.get(
-                        url, headers=extract["headers"], cookies=extract["cookies"])
-                    if "type" in body and body["type"]:
-                        url += "&type={0}".format(body["type"])
-                    results.extend(resp.json())
-                    total = resp.headers["X-Page-Total"]
-                    page += 1
-                return {"status": 200, "data": {"total": total, "results": results}}
-
-            else:
-                limit = body["limit"] if "limit" in body else 100
-                page = body["page"] + 1 if "page" in body else 1
-                url = "https://{0}/api/v1/installer/orgs/{1}/devices?limit={2}&page={3}".format(
-                    extract["host"], body["org_id"], limit, page)
+            limit = 1000
+            page = 1
+            results = []
+            total = 1
+            while len(results) < int(total) and int(page) < 50:
                 if "type" in body and body["type"]:
-                    url += "&type={0}".format(body["type"])
+                    device_type = body["type"]
+                else:
+                    device_type = "all"
+                
+                url = "https://{0}/api/v1/installer/orgs/{1}/devices?type={2}&limit={3}&page={4}".format(
+                    extract["host"], body["org_id"],device_type, limit, page)
                 resp = requests.get(
                     url, headers=extract["headers"], cookies=extract["cookies"])
-                return {"status": 200, "data": {"page": resp.headers["X-Page-Page"], "limit": resp.headers["X-Page-limit"], "total": resp.headers["X-Page-Total"], "results": resp.json()}}
+                results.extend(resp.json())
+                total = resp.headers["X-Page-Total"]
+                page += 1
+            return {"status": 200, "data": {"total": total, "results": results}}
+
         except:
             return {"status": 500, "data": {"message": "Unable to retrieve the inventory"}}
 
