@@ -154,27 +154,27 @@
                                 <mat-divider inset="true" style="margin-bottom: 1em;"></mat-divider>
                                 <mat-form-field appearance="outline">
                                     <mat-label>NAME</mat-label>
-                                    <input matInput formControlName="name" cdkFocusInitial />
+                                    <input matInput formControlName="name" cdkFocusInitial (keydown.enter)="saveDevice()" />
                                 </mat-form-field>
                                 <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
 
                                     <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>HEIGHT</mat-label>
-                                        <input matInput formControlName="height" type="number" min="0" />
+                                        <input matInput formControlName="height" type="number" min="0" (keydown.enter)="saveDevice()" />
                                     </mat-form-field>
                                     <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>ORIENTATION</mat-label>
-                                        <input matInput type="number" formControlName="orientation" min="0" max="360" />
+                                        <input matInput type="number" formControlName="orientation" min="0" max="360" (keydown.enter)="saveDevice()" />
                                     </mat-form-field>
 
                                     <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>X POSITION</mat-label>
-                                        <input matInput formControlName="x" type="number" />
+                                        <input matInput formControlName="x" type="number" (keydown.enter)="saveDevice()" />
                                     </mat-form-field>
 
                                     <mat-form-field *ngIf="editingDevice.type=='ap'" appearance="outline">
                                         <mat-label>Y POSITION</mat-label>
-                                        <input matInput formControlName="y" type="number" />
+                                        <input matInput formControlName="y" type="number" (keydown.enter)="saveDevice()" />
                                     </mat-form-field>
                                 </div>
                             </form>

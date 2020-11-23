@@ -89,10 +89,10 @@ export class DashboardComponent implements OnInit {
   resultsLength = 0;
   displayedColumns: string[] = ["device"];//['mac', 'name', 'type', 'model', 'serial', 'connected', 'site_name', 'action']
   private _subscription: Subscription
-  
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private _router: Router, private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar ) { }
+  constructor(private _router: Router, private _http: HttpClient, private _appService: ConnectorService, public _dialog: MatDialog, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) { }
 
   //////////////////////////////////////////////////////////////////////////////
   /////           INIT
@@ -110,7 +110,6 @@ export class DashboardComponent implements OnInit {
     this._appService.sites.subscribe(sites => this.sites = sites)
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
-
 
     if (this.sites.length == 0) {
       this.loadSites()
@@ -135,7 +134,7 @@ export class DashboardComponent implements OnInit {
   // when a device is assigned to a site
   changeSite(): void {
     this.frmDevice.controls["map_id"].setValue("")
-    if (this.frmDevice.value.site_name){
+    if (this.frmDevice.value.site_name) {
       this.getMaps(this.frmDevice.value.site_name);
     }
   }
@@ -227,8 +226,8 @@ export class DashboardComponent implements OnInit {
           data["results"].forEach(element => {
             if (!this.site_name || (element.site_name == this.site_name && (this.map_id == "__any__" || element.map_id == this.map_id))) {
               tmp.push(element)
-              if (this.editingDevice && this.editingDevice.mac == element.mac){
-                this.editingDevice = element;  
+              if (this.editingDevice && this.editingDevice.mac == element.mac) {
+                this.editingDevice = element;
               }
             }
           });
@@ -293,27 +292,32 @@ export class DashboardComponent implements OnInit {
   }
 
   saveDevice(): void {
-    var body = {
-      host: this.host,
-      cookies: this.cookies,
-      headers: this.headers,
-      role: this.role,
-      org_id: this.org_id,
-      device: this.frmDevice.getRawValue(),
-      device_mac: this.editingDevice.mac
-    }
-    this._http.post<any>('/api/devices/provision/', body).subscribe({
-      next: data => {
-        this.updateFrmDeviceValues(data.result)
-        this.getDevices()
-        this.openSnackBar("Device " + this.editingDevice.mac + " successfully provisioned", "Done")
-      },
-      error: error => {
-        var message: string = "Unable to save changes to Device " + this.editingDevice.mac + "... "
-        if ("error" in error) { message += error["error"]["message"] }
-        this.openError(message)
+    if (this.frmDevice.valid && !this.topBarLoading) {
+      this.topBarLoading = true
+      var body = {
+        host: this.host,
+        cookies: this.cookies,
+        headers: this.headers,
+        role: this.role,
+        org_id: this.org_id,
+        device: this.frmDevice.getRawValue(),
+        device_mac: this.editingDevice.mac
       }
-    })
+      this._http.post<any>('/api/devices/provision/', body).subscribe({
+        next: data => {
+          this.topBarLoading = false
+          this.updateFrmDeviceValues(data.result)
+          this.getDevices()
+          this.openSnackBar("Device " + this.editingDevice.mac + " successfully provisioned", "Done")
+        },
+        error: error => {
+          this.topBarLoading = false
+          var message: string = "Unable to save changes to Device " + this.editingDevice.mac + "... "
+          if ("error" in error) { message += error["error"]["message"] }
+          this.openError(message)
+        }
+      })
+    }
   }
   discardDevice(): void {
     this.frmDevice = this._formBuilder.group({
@@ -338,7 +342,7 @@ export class DashboardComponent implements OnInit {
       this._http.post<any>('/api/devices/unlocate/', { host: this.host, cookies: this.cookies, headers: this.headers, role: this.role, org_id: this.org_id, device_mac: device_mac }).subscribe({
         next: data => {
           this.openSnackBar("Location  of the Device " + this.editingDevice.mac + " stopped", "Done")
-          this.locatingDevices.splice(index, 1)          
+          this.locatingDevices.splice(index, 1)
         },
         error: error => {
           var message: string = "There was an error... "
@@ -368,7 +372,7 @@ export class DashboardComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   /////           COMMON
   //////////////////////////////////////////////////////////////////////////////
-  updateFrmDeviceValues(device):void {
+  updateFrmDeviceValues(device): void {
     this.frmDevice.controls["map_id"].setValue(device.map_id)
     this.frmDevice.controls["name"].setValue(device.name)
     this.frmDevice.controls["site_name"].setValue(device.site_name)
