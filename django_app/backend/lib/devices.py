@@ -188,11 +188,11 @@ class Devices(Common):
         extract = self.extractAuth(body)
         if "device_mac" in body:
             try:
-            url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}/unlocate".format(
-                body["host"], body["org_id"], body["device_mac"])
-            resp = requests.post(
-                url, headers=extract["headers"], cookies=extract["cookies"])
-            return {"status": 200, "data": {"result": resp.json()}}
+                url = "https://{0}/api/v1/installer/orgs/{1}/devices/{2}/unlocate".format(
+                    body["host"], body["org_id"], body["device_mac"])
+                resp = requests.post(
+                    url, headers=extract["headers"], cookies=extract["cookies"])
+                return {"status": 200, "data": {"result": resp.json()}}
             except:
                 return {"status": 500, "data": {"message": "unable to provision the device"}}
         else:
