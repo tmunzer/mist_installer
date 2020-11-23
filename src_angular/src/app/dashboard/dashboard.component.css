@@ -121,3 +121,7 @@ td.selected {
     background-color: lightgrey;
     transition: background-color 250ms ease-in-out;
 }
+
+.compact-select {
+    margin: 1em 0 -1em;
+}

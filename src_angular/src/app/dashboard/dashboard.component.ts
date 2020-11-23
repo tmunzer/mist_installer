@@ -73,7 +73,7 @@ export class DashboardComponent implements OnInit {
   orgMode: boolean = false;
   site_name: string = "__any__";
   map_id: string = "__any__";
-  device_type: string = ""
+  device_type: string = "all"
   me: string = "";
 
   claimButton: string = "To Site";
@@ -110,6 +110,7 @@ export class DashboardComponent implements OnInit {
     this._appService.sites.subscribe(sites => this.sites = sites)
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
+
 
     if (this.sites.length == 0) {
       this.loadSites()
