@@ -89,7 +89,7 @@
                         <div mat-dialog-content fxLayout="column">
                             <div fxLayout="row wrap" fxLayoutAlign="space-between stretch">
                                 <div fxLayout="column" fxLayoutAlign="center center" style="margin-bottom: 2em;">
-                                    <mat-slide-toggle [checked]="locatingDevices.indexOf(editingDevice.mac) >= 0" (change)="locate()" [disabled]="!editingDevice.connected || !editingDevice.site_name">
+                                    <mat-slide-toggle [checked]="locatingDevices.indexOf(editingDevice.mac) >= 0" (change)="locate()" [disabled]="!editingDevice.connected || !editingDevice.site_name" *ngIf="editingDevice.type=='ap'">
                                         Locate
                                     </mat-slide-toggle>
                                 </div>
