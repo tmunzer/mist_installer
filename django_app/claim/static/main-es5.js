@@ -1499,53 +1499,58 @@
             });
 
             this.me = this.self["email"] || null;
-            var tmp_orgs = []; // parsing all the orgs/sites from the privileges
-            // only orgs with admin/write/installer roles are used
+            var tmp_orgs = [];
 
-            if (this.self != {} && this.self["privileges"]) {
-              this.self["privileges"].forEach(function (element) {
-                if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
-                  if (element["scope"] == "org") {
-                    if (tmp_orgs.indexOf(element["org_id"]) < 0) {
-                      _this4.orgs.push({
-                        id: element["org_id"],
-                        name: element["name"],
-                        role: element["role"]
-                      });
+            if (!this.me) {
+              this._router.navigate(["/login"]);
+            } else {
+              // parsing all the orgs/sites from the privileges
+              // only orgs with admin/write/installer roles are used
+              if (this.self != {} && this.self["privileges"]) {
+                this.self["privileges"].forEach(function (element) {
+                  if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
+                    if (element["scope"] == "org") {
+                      if (tmp_orgs.indexOf(element["org_id"]) < 0) {
+                        _this4.orgs.push({
+                          id: element["org_id"],
+                          name: element["name"],
+                          role: element["role"]
+                        });
 
-                      tmp_orgs.push(element["org_id"]);
-                    }
-                  } else if (element["scope"] == "site") {
-                    if (tmp_orgs.indexOf(element["org_id"]) < 0) {
-                      _this4.orgs.push({
-                        id: element["org_id"],
-                        name: element["org_name"],
-                        role: element["role"]
-                      });
+                        tmp_orgs.push(element["org_id"]);
+                      }
+                    } else if (element["scope"] == "site") {
+                      if (tmp_orgs.indexOf(element["org_id"]) < 0) {
+                        _this4.orgs.push({
+                          id: element["org_id"],
+                          name: element["org_name"],
+                          role: element["role"]
+                        });
 
-                      tmp_orgs.push(element["org_id"]);
+                        tmp_orgs.push(element["org_id"]);
+                      }
                     }
                   }
-                }
-              });
-              this.orgs = this.sortList(this.orgs, "name");
-            } // if only one, using it by default
+                });
+                this.orgs = this.sortList(this.orgs, "name");
+              } // if only one, using it by default
 
 
-            if (!this.org_id && this.orgs.length == 1) {
-              this.org_id = this.orgs[1]["id"];
-            } // if back button used, retrieving previously selected org
-            // or if only one org, loading it automatically
+              if (!this.org_id && this.orgs.length == 1) {
+                this.org_id = this.orgs[1]["id"];
+              } // if back button used, retrieving previously selected org
+              // or if only one org, loading it automatically
 
 
-            if (this.org_id) {
-              this.orgs.forEach(function (element) {
-                if (element.id == _this4.org_id) {
-                  _this4.selected_org_obj = element;
+              if (this.org_id) {
+                this.orgs.forEach(function (element) {
+                  if (element.id == _this4.org_id) {
+                    _this4.selected_org_obj = element;
 
-                  _this4.changeOrg();
-                }
-              });
+                    _this4.changeOrg();
+                  }
+                });
+              }
             }
           } // when the user selects a new org
           // disabling the admin mode
@@ -3131,25 +3136,33 @@
               return _this7.orgMode = orgMode;
             });
 
-            if (this.sites.length == 0) {
-              this.loadSites();
+            this.me = this.self["email"] || null;
+
+            if (!this.me) {
+              this._router.navigate(["/login"]);
+            } else {
+              if (this.sites.length == 0) {
+                this.loadSites();
+              }
+
+              this.getDevices();
+
+              if (this.site_name) {
+                this.getMaps(this.site_name);
+              }
+
+              this.onChanges();
+              this._subscription = source.subscribe(function (s) {
+                return _this7.getDevices();
+              });
             }
-
-            this.getDevices();
-
-            if (this.site_name) {
-              this.getMaps(this.site_name);
-            }
-
-            this.onChanges();
-            this._subscription = source.subscribe(function (s) {
-              return _this7.getDevices();
-            });
           }
         }, {
           key: "ngOnDestroy",
           value: function ngOnDestroy() {
-            this._subscription.unsubscribe();
+            if (this._subscription) {
+              this._subscription.unsubscribe();
+            }
           } //////////////////////////////////////////////////////////////////////////////
           /////           SITE MGMT
           //////////////////////////////////////////////////////////////////////////////

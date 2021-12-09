@@ -110,23 +110,28 @@ export class DashboardComponent implements OnInit {
     this._appService.sites.subscribe(sites => this.sites = sites)
     this._appService.role.subscribe(role => this.role = role)
     this._appService.orgMode.subscribe(orgMode => this.orgMode = orgMode)
+    this.me = this.self["email"] || null
 
-    if (this.sites.length == 0) {
-      this.loadSites()
+    if (!this.me) {
+      this._router.navigate(["/login"]);
+    } else {
+      if (this.sites.length == 0) {
+        this.loadSites()
+      }
+      this.getDevices();
+      if (this.site_name) {
+        this.getMaps(this.site_name);
+      }
+      this.onChanges()
+      this._subscription = source.subscribe(s => this.getDevices());
     }
-    this.getDevices();
-    if (this.site_name) {
-      this.getMaps(this.site_name);
-    }
-
-    this.onChanges()
-
-    this._subscription = source.subscribe(s => this.getDevices());
 
   }
 
   ngOnDestroy() {
-    this._subscription.unsubscribe();
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
   }
   //////////////////////////////////////////////////////////////////////////////
   /////           SITE MGMT

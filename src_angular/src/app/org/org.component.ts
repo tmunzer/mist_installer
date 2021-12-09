@@ -57,9 +57,11 @@ export class OrgComponent implements OnInit {
     this._appService.self.subscribe(self => this.self = self || {})
     this._appService.org_id.subscribe(org_id => this.org_id = org_id)
     this.me = this.self["email"] || null
-
     var tmp_orgs: string[] = []
 
+    if (! this.me) {
+      this._router.navigate(["/login"]);
+    } else {
     // parsing all the orgs/sites from the privileges
     // only orgs with admin/write/installer roles are used
     if (this.self != {} && this.self["privileges"]) {
@@ -95,6 +97,7 @@ export class OrgComponent implements OnInit {
         }
       })
     }
+  }
   }
 
   // when the user selects a new org

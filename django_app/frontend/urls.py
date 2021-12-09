@@ -5,6 +5,9 @@ from . import views
 
 urlpatterns = [
     path(r'', views.index.as_view(), name='index'),
+    path(r'login', views.index.as_view(), name='index'),
+    path(r'select', views.index.as_view(), name='index'),
+    path(r'dashboard', views.index.as_view(), name='index'),
 ]
 
 handler404 = views.handler404
