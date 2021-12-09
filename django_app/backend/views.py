@@ -7,11 +7,30 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import time
 import logging
-
+import os
 from .lib.devices import Devices
 from .lib.sites import Sites
 from .lib.maps import Maps
 
+try:
+    from .config import google_api_key
+except:
+    google_api_key = os.environ.get("GOOGLE_API_KEY", default="")
+
+try:
+    from .config import app_disclaimer
+except:
+    app_disclaimer = os.environ.get("APP_DISCLAIMER", default="")
+
+try:
+    from .config import app_github_url
+except:
+    app_github_url = os.environ.get("APP_GITHUB_URL", default="")
+
+try:
+    from .config import app_docker_url
+except:
+    app_docker_url = os.environ.get("APP_DOCKER_URL", default="")
 try:
     from .config import google_api_key
 except:
@@ -221,3 +240,12 @@ window.initMap = function() {{
 document.head.appendChild(script);
         """.format(google_api_key)
         return HttpResponse(data, content_type="application/javascript")
+
+@csrf_exempt
+def disclaimer(request):
+    if request.method == "GET":
+        return JsonResponse({
+            "disclaimer": app_disclaimer,
+            "github_url": app_github_url,
+            "docker_url": app_docker_url
+        })

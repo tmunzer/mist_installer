@@ -27,8 +27,11 @@ export class LoginComponent implements OnInit {
   headers = {};
   cookies = {};
   self = {};
-  show_github_fork_me : boolean = false;
-  hostnames_to_show_github_fork_me = ["localhost", "127.0.0.1", "installer.mist-lab.fr"]
+
+  github_url: string;
+  docker_url: string;
+  disclaimer: string;
+
   loading: boolean;
   hosts = [
     { value: 'api.mist.com', viewValue: 'US - manage.mist.com' },
@@ -53,9 +56,6 @@ export class LoginComponent implements OnInit {
 
   //// INIT ////
   ngOnInit(): void {
-    if (this.hostnames_to_show_github_fork_me.indexOf(this._platformLocation.hostname) >= 0){      
-      this.show_github_fork_me = true;
-    }
     this.frmStepLogin = this._formBuilder.group({
       host: ['api.mist.com'],
       credentials: this._formBuilder.group({
@@ -67,6 +67,13 @@ export class LoginComponent implements OnInit {
     this._http.get<any>('/api/gap').subscribe({
       next: data => this._appService.googleApiKeySet(data.gap),
       error: error => console.error("Unable to load the Google API Key... Maps won't be available...")      
+    })
+    this._http.get<any>("/api/disclaimer").subscribe({
+      next: data => {
+        if (data.disclaimer) this.disclaimer = data.disclaimer;
+        if (data.github_url) this.github_url = data.github_url;
+        if (data.docker_url) this.docker_url = data.docker_url;
+      }
     })
   }
 

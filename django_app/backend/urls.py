@@ -14,6 +14,7 @@ urlpatterns = [
     path('sites/installer/', views.changeInstaller, name='change installer access'),    
     path('maps/', views.maps, name='maps'),    
     path('script', views.script, name="googlemaps"),
-    path('gap', views.gap, name="gap")
+    path('gap', views.gap, name="gap"),
+    path('disclaimer', views.disclaimer, name="disclaimer")
 ]
 
