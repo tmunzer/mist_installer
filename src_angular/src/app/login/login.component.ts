@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import { ConnectorService } from '../connector.service';
-import {PlatformLocation} from '@angular/common';
+import { PlatformLocation } from '@angular/common';
 import { TwoFactorDialog } from './login-2FA';
 
 export interface TwoFactorData {
@@ -21,7 +21,7 @@ export interface TwoFactorData {
 export class LoginComponent implements OnInit {
 
   constructor(private _formBuilder: FormBuilder, private _http: HttpClient, private _router: Router, private _appService: ConnectorService, public _dialog: MatDialog, private _platformLocation: PlatformLocation
-    ) { }
+  ) { }
 
   host = null;
   headers = {};
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
     });
     this._http.get<any>('/api/gap').subscribe({
       next: data => this._appService.googleApiKeySet(data.gap),
-      error: error => console.error("Unable to load the Google API Key... Maps won't be available...")      
+      error: error => console.error("Unable to load the Google API Key... Maps won't be available...")
     })
     this._http.get<any>("/api/disclaimer").subscribe({
       next: data => {
@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
     this._appService.hostSet(this.host);
     this.reset_error_mess();
   }
-  reset_error_mess(): void{
+  reset_error_mess(): void {
     this.error_mess = {
       "credentials": "",
       "token": ""
@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit {
     this._appService.cookiesSet(data.cookies);
     this._appService.hostSet(data.host);
     this._appService.selfSet(data.data)
-    this.loading = false; 
+    this.loading = false;
     this._router.navigate(['/select']);
   }
 
@@ -148,7 +148,7 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       this._http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password }).subscribe({
         next: data => this.parse_response(data),
-        error: error => this.error_message("credentials", error.error.message)      
+        error: error => this.error_message("credentials", error.error.message)
       })
     }
   }
@@ -167,7 +167,7 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       this._http.post<any>('/api/login/', { host: this.frmStepLogin.value.host, email: this.frmStepLogin.value.credentials.email, password: this.frmStepLogin.value.credentials.password, two_factor: twoFactor }).subscribe({
         next: data => this.parse_response(data),
-        error: error => this.error_message("credentials", error.error.message)      
+        error: error => this.error_message("credentials", error.error.message)
       })
     }
   }
@@ -176,7 +176,11 @@ export class LoginComponent implements OnInit {
   open2FA(): void {
     const dialogRef = this._dialog.open(TwoFactorDialog, {});
     dialogRef.afterClosed().subscribe(result => {
-      this.submit2FA(result)
+      if (result) {
+        this.submit2FA(result)
+      } else {
+        this.loading = false;
+      }
     });
   }
 }
