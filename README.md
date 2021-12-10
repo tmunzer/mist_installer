@@ -6,7 +6,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/main/._readme/img/claim.png"  width="75%"  />
+<img src="https://github.com/tmunzer/mist_claim_web_ui/raw/main/._readme/img/claim.png"  width="75%"  />
 
 ## Features
 - Retrieve and display Org and Site newly claimed devices 
@@ -14,8 +14,8 @@ This program is free software: you can redistribute it and/or modify it under th
 - Edit newly claimed devices settings
 - Assign newly claimed devices to Site/Floorplan
 
-<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/main/._readme/img/login.png"  width="45%"  />
-<img src="https://github.com/tmunzer/mist_claim_web_ui/blob/main/._readme/img/edit.png" width="45%"  />
+<img src="https://github.com/tmunzer/mist_claim_web_ui/raw/main/._readme/img/login.png"  width="45%"  />
+<img src="https://github.com/tmunzer/mist_claim_web_ui/raw/main/._readme/img/edit.png" width="45%"  />
 
 
 ## Installation
