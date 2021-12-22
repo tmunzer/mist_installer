@@ -1,6 +1,6 @@
-<mat-card class="card-outer">
+<mat-card class="card-outer" fxLayout="column" style="padding-bottom: 0;padding-top: 0;height: calc(100vh - 64px);justify-content: space-between;">
 
-    <div fxLayout="column">
+    <div fxLayout="column" style="flex-grow: 1;justify-content: flex-start;">
         <div fxLayout="column" class="top-bar-container">
             <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="top-bar mat-elevation-z8">
 
@@ -32,9 +32,9 @@
 
         </div>
 
-        <div style="background-color: white; " fxLayout="column">
+        <div style="background-color: white; height: 100%;" fxLayout="column">
 
-            <div fxLayout="row" fxLayoutAlign="stretch" style="min-height: 800px;">
+            <div fxLayout="row" fxLayoutAlign="stretch" style="flex-grow: 1;">
                 <div fxLayout="column" fxFlex="30%" class="mat-elevation-z8">
                     <div fxLayout="column" class="psk-table-container">
                         <table mat-table [dataSource]="filteredDevicesDatase">
@@ -191,7 +191,7 @@
             </div>
         </div>
     </div>
-    <div fxLayou="row" fxLayoutAlign="start center" style="margin-top: 1em;">
+    <div fxLayou="row" fxLayoutAlign="start center" style="margin-top: 1em;margin-bottom: 1em;">
         <button mat-raised-button color="accent" (click)="back()">Back</button>
     </div>
 </mat-card>
