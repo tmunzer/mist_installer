@@ -32,6 +32,7 @@ class Orgs(Common):
             return "error"
 
     def _update_org_installer(self, body, org_id, site_id, enabled):
+        extract = self.extractAuth(body)
         try:
             installer_setting = self.installer_setting(body)
             if enabled and installer_setting:
@@ -55,8 +56,8 @@ class Orgs(Common):
                 elif "extra_site_ids" in installer_setting and site_id in installer_setting["extra_site_ids"]:
                     installer_setting["extra_site_ids"].remove(site_id)              
             if installer_setting:
-                url = "https://{0}/api/v1/orgs/{1}/setting".format(body["host"], body["org_id"])
-                resp=requests.put(url, headers=body["headers"], cookies=body["cookies"], json={"installer": installer_setting})
+                url = "https://{0}/api/v1/orgs/{1}/setting".format(body["host"], org_id)
+                resp=requests.put(url, headers=extract["headers"], cookies=extract["cookies"], json={"installer": installer_setting})
                 return {"status": 200, "data":{"result": True}}
         except:
             return {"status": 500, "data":{"error": {"message":"Unable to update the org settings"}}}
