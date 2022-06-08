@@ -124,3 +124,4 @@ dmypy.json
 .pyre/
 src_angular/node_modules/
 django_app/backend/config.py
+src_angular/.angular
