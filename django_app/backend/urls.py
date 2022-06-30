@@ -15,6 +15,7 @@ urlpatterns = [
     path('maps/', views.maps, name='maps'),    
     path('script', views.script, name="googlemaps"),
     path('gap', views.gap, name="gap"),
-    path('disclaimer', views.disclaimer, name="disclaimer")
+    path('disclaimer', views.disclaimer, name="disclaimer"),
+    path('hosts', views.hosts, name="hosts"),
 ]
 
