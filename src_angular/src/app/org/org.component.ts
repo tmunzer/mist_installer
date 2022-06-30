@@ -159,7 +159,7 @@ export class OrgComponent implements OnInit {
   // enable/disable the installer access for a specific site
   changeInstaller(site, enabled): void {
     this.topBarLoading = true
-    this._http.post<any>('/api/sites/installer/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: site.id, enabled: enabled }).subscribe({
+    this._http.post<any>('/api/sites/installer/', { host: this.host, cookies: this.cookies, headers: this.headers, org_id: this.org_id, site_id: site.id, enabled: enabled, role: this.role }).subscribe({
       next: data => {
         this.topBarLoading = false;
         site.installer = enabled;

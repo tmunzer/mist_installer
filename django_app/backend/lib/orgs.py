@@ -19,7 +19,7 @@ class Orgs(Common):
 
     def _load_sites(self, body):
         try:
-            if "role" in body and body["role"] in ["write", "admin"]:
+            if body.get("role") in ["write", "admin"]:
                 url = "https://{0}/api/v1/orgs/{1}/sites".format(
                     body["host"], body["org_id"])
             else:
@@ -45,7 +45,7 @@ class Orgs(Common):
                     "extra_site_ids": [site_id]
                 }
             else:
-                if "allow_all_sites" in installer_setting and installer_setting["allow_all_sites"]==True:
+                if installer_setting.get("allow_all_sites")==True:
                     sites = self._load_sites(body)
                     site_ids = []
                     for site in sites:
@@ -54,7 +54,7 @@ class Orgs(Common):
                     installer_setting["allow_all_sites"] = False
                     installer_setting["extra_site_ids"] = site_ids   
                 elif "extra_site_ids" in installer_setting and site_id in installer_setting["extra_site_ids"]:
-                    installer_setting["extra_site_ids"].remove(site_id)              
+                    installer_setting["extra_site_ids"].remove(site_id) 
             if installer_setting:
                 url = "https://{0}/api/v1/orgs/{1}/setting".format(body["host"], org_id)
                 resp=requests.put(url, headers=extract["headers"], cookies=extract["cookies"], json={"installer": installer_setting})
