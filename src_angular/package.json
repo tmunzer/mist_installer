@@ -24,7 +24,7 @@
         "@angular/platform-browser-dynamic": "^13.3.11",
         "@angular/router": "^13.3.11",
         "@types/google.maps": "^3.48.8",
-        "leaflet": "^1.8.0",
+        "leaflet": "^1.9.2",
         "org": "^0.2.0",
         "rxjs": "~6.6.0",
         "tslib": "^2.4.0",
