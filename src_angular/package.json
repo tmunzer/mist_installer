@@ -23,7 +23,7 @@
         "@angular/material": "^13.3.7",
         "@angular/platform-browser-dynamic": "^13.3.12",
         "@angular/router": "^13.3.12",
-        "@types/google.maps": "^3.50.5",
+        "@types/google.maps": "^3.51.0",
         "leaflet": "^1.9.3",
         "org": "^0.2.0",
         "rxjs": "~6.6.0",
