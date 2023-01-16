@@ -1,6 +1,6 @@
 <mat-card class="card-outer">
-    <div fxLayout="column" class="top-bar-container">
-        <div fxLayout="row wrap" class="top-bar  mat-elevation-z8">
+    <div class="top-bar-container flex column">
+        <div class="top-bar  mat-elevation-z8 flex row wrap">
             <mat-form-field appearance="outline" class="list">
                 <mat-label>Organization</mat-label>
                 <mat-select [(value)]="selected_org_obj" (selectionChange)="changeOrg()">
@@ -14,7 +14,7 @@
                 </mat-select>
             </mat-form-field>
 
-            <div *ngIf="adminAccess" fxLayout="row" fxLayoutAlign="center center">
+            <div *ngIf="adminAccess" class="flex row  center-center">
                 <mat-label style="vertical-align: top;display: inline-block;line-height: 24px; margin-right: 8px;">Installer View</mat-label>
                 <mat-slide-toggle [checked]="adminMode" (change)="changeRole($event)">Admin View</mat-slide-toggle>
             </div>
@@ -28,22 +28,22 @@
         <mat-progress-bar mode="indeterminate" color="accent" *ngIf="topBarLoading == true"></mat-progress-bar>
     </div>
     <div>
-        <mat-card *ngIf="!org_id" fxLayoutAlign="center">
+        <mat-card *ngIf="!org_id" class="flex row center-center">
             <span style="color:#777">
                 Please Select an Organization
             </span>
         </mat-card>
-        <mat-card *ngIf="noSiteToDisplay" fxLayout="column" fxLayoutAlign="center stretch">
-            <div style="color:#777; margin: 2em auto;" fxLayoutAlign="center stretch">
+        <mat-card *ngIf="noSiteToDisplay" class="flex column center-stretch">
+            <div style="color:#777; margin: 2em auto;" class="flex center-stretch">
                 You don't have access to any Site in this Organization. Please chose another Organization.
             </div>
-            <div style="color: #777; font-size: small; margin-bottom: 2em;" fxLayoutAlign="center stretch">
+            <div style="color: #777; font-size: small; margin-bottom: 2em;" class="flex center-stretch">
                 Only the Sites Installers with the "Installer" authorizations are listed.
             </div>
         </mat-card>
     </div>
-    <div fxLayout="row wrap" fxLayoutAlign="start stretch">
-        <mat-card *ngFor="let site of sites" class="mat-elevation-z2" fxLayout="column" fxLayoutAlign="space-between stretch" style="cursor: pointer;margin: 10px; padding: 0px; width: 300px;">
+    <div class="flex row wrap start-stretch">
+        <mat-card *ngFor="let site of sites" class="mat-elevation-z2 flex column space-between-stretch" style="cursor: pointer;margin: 10px; padding: 0px; width: 300px;">
             <div (click)="setSite(site)">
                 <mat-card-title style="margin:10px">
                     {{site.name}}
@@ -60,7 +60,7 @@
                     </google-map>
                 </mat-card-content>
             </div>
-            <div *ngIf="adminMode" fxLayout="column" fxLayoutAlign="center stretch">
+            <div *ngIf="adminMode" class="flex column center-stretch">
                 <button *ngIf="!site.installer" mat-raised-button color="accent" (click)="changeInstaller(site, true)">Add Installer Access</button>
                 <button *ngIf="site.installer" style="background-color: red;" mat-raised-button color="accent" (click)="changeInstaller(site, false)">Remove Installer Access</button>
             </div>

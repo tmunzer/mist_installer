@@ -13,6 +13,62 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.flex {
+    display: flex;
+}
+
+.flex.row {
+    flex-direction: row;
+}
+
+.flex.row.wrap {
+    flex-flow: row wrap;
+}
+
+.flex.column {
+    flex-direction: column;
+}
+
+.flex.start-center {
+    place-content: start;
+    align-items: center;
+}
+
+.flex.start-stretch {
+    place-content: start;
+    align-items: stretch;
+}
+
+.flex.center-center {
+    place-content: center;
+    align-items: center;
+}
+
+.flex.center-stretch {
+    place-content: center;
+    align-items: stretch;
+}
+
+.flex.space-between-center {
+    place-content: space-between;
+    align-items: center;
+}
+
+.flex.space-between-end {
+    place-content: space-between;
+    align-items: end;
+}
+
+.flex.space-between-stretch {
+    place-content: space-between;
+    align-items: stretch;
+}
+
+.flex.stretch {
+    /* flex row*/
+    align-items: stretch;
+}
+
 
 /**
 * Generated theme by Material Theme Generator

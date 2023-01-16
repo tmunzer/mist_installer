@@ -1,9 +1,9 @@
 <mat-card class="card-outer">
 
     <form [formGroup]="frmStepLogin" class="login-form">
-        <div class="login-form-outer" [formGroup]="frmStepLogin" fxLayout="column">
+        <div class="login-form-outer flex column" [formGroup]="frmStepLogin">
             <div class="login-form-inner">
-                <div fxLayout="column" class="login-step">
+                <div class="login-step flex column">
                     <mat-form-field appearance="outline">
                         <mat-label>Mist Cloud</mat-label>
                         <mat-select formControlName="host">
@@ -13,7 +13,7 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div fxLayout="row" class="login-form-or">
+                <div class="login-form-or flex row">
                     <span></span>
                     <button mat-fab color="accent" aria-label="AND" class="disable-click">
                         AND
@@ -21,9 +21,9 @@
                     <span></span>
                 </div>
 
-                <div fxLayout="row" class="login-step">
+                <div class="login-step flex row">
 
-                    <div formGroupName="credentials" fxLayout="column" class="login-form-inputs">
+                    <div formGroupName="credentials" class="login-form-inputs flex column">
                         <h1>Access with Login/Password</h1>
                         <mat-form-field appearance="outline">
                             <mat-label>Email</mat-label>
@@ -41,14 +41,14 @@
                         <button mat-raised-button color="primary" (click)="submitCredentials()">Continue with
                             credentials</button>
                     </div>
-                    <div fxLayout="column" class="login-form-or">
+                    <div class="login-form-or flex column">
                         <mat-divider [vertical]="true"></mat-divider>
                         <button mat-fab color="accent" aria-label="OR" class="disable-click" style="margin-bottom: 4em;">
                             OR
                         </button>
                         <mat-divider [vertical]="true"></mat-divider>
                     </div>
-                    <div fxLayout="column" class="login-form-inputs">
+                    <div class="login-form-inputs flex column">
                         <h1>Access with API Token</h1>
                         <mat-form-field appearance="outline" style="padding: 0;">
                             <mat-label>API Token</mat-label>
@@ -62,8 +62,8 @@
                             Token</button>
                     </div>
                 </div>
-                <div class="loading" fxLayout="row" *ngIf="loading || hosts_loading">
-                    <div fxLayout="column">
+                <div class="loading flex row" *ngIf="loading || hosts_loading">
+                    <div class="flex column">
                         <mat-spinner strokeWidth=3></mat-spinner>
                     </div>
                 </div>

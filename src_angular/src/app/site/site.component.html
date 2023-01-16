@@ -1,8 +1,8 @@
 <mat-card class="card-outer">
 
-    <div fxLayout="column">
-        <div fxLayout="column" class="top-bar-container">
-            <div fxLayout="row wrap" fxLayoutAlign="space-between center" class="top-bar mat-elevation-z8">
+    <div class="flex column">
+        <div class="top-bar-container flex column">
+            <div class="top-bar mat-elevation-z8 flex row wrap space-between-center">
 
                 <mat-form-field appearance="outline" class="list">
                     <mat-label>Map</mat-label>
@@ -32,11 +32,11 @@
 
 
 
-        <div style="background-color: white; " fxLayout="column">
+        <div style="background-color: white;" class="flex column">
 
-            <div fxLayout="row" fxLayoutAlign="stretch" style="min-height: 800px;">
-                <div fxLayout="column" fxFlex="30%" class="mat-elevation-z8">
-                    <div fxLayout="column" class="psk-table-container">
+            <div class="flex row stretch" style="min-height: 800px;">
+                <div fxFlex="30%" class="mat-elevation-z8 flex column">
+                    <div class="psk-table-container flex column">
                         <table mat-table [dataSource]="filteredDevicesDatase">
                             <ng-container matColumnDef="device">
                                 <th mat-header-cell *matHeaderCellDef>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="map-container">
-                    <div class="map-frame" fxLayout="column" fxLayoutAlign="center stretch">
+                    <div class="map-frame flex column center-stretch">
                         <div [ngClass]="{hidden_map: hideFloorplan}" id="map"></div>
                         <div *ngIf="hideFloorplan" style="text-align: center;font-size: large;color: gray;">
                             No Floorplan to display
@@ -65,8 +65,8 @@
                 <!-- <img [src]="map.url" style="overflow: hidden;" /> -->
             </div>
 
-            <div class=" loading " fxLayout="row " *ngIf="loading ">
-                <div fxLayout="column ">
+            <div class="loading flex row" *ngIf="loading">
+                <div class="flex column">
                     <mat-spinner></mat-spinner>
                 </div>
             </div>
