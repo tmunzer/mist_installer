@@ -61,9 +61,9 @@
 <h1 mat-dialog-title>Claim new devices</h1>
 <div mat-dialog-content class="flex column">
     <div style="margin: 0 1em 1em; color: gray; font-size: small">HINT: you can paste mutliple claim codes separated by a SPACE, a COMMA or a SEMICOLUMN</div>
-    <div *ngIf="!isDone" class="flex row" fxFill style="padding: 0 2em">
-        <mat-form-field fxFill>
-            <mat-label>Claim Code</mat-label>
+    <div *ngIf="!isDone" class="flex row" style="padding: 0 2em">
+        <mat-form-field class="flex column fxflex">
+            <mat-label>Claim Codes</mat-label>
             <input matInput placeholder="ABCDE-12345-F6G7H" (keydown.enter)="add()" [(ngModel)]="inputClaimCodes" cdkFocusInitial>
         </mat-form-field>
         <button mat-icon-button (click)="add()" style="height: 100%;" class="add-icon">
@@ -71,9 +71,9 @@
         </button>
     </div>
     <div style="max-width: 80em; min-width: 20em;">
-        <div *ngIf="claimCodes.length > 0" fxFlex="1 1 0" clas="flex row wrap" style="width: 100%;">
+        <div *ngIf="claimCodes.length > 0" class="flex row wrap fxflex" style="width: 100%;">
             <mat-card class="flex row" *ngFor="let claimCode of claimCodes" style="background-color: #eeeeee; margin:5px; border-radius: 1.7em; padding: 0; height: 4em;">
-                <mat-form-field class="claim-code" style="margin: 0 1em; width: 11em;" [ngClass]="{error: !claimCode.valid, warning: claimCode.duplicated}">
+                <mat-form-field class="claim-code" style="margin: 0 1em; width: 11em; width: 100%;" [ngClass]="{error: !claimCode.valid, warning: claimCode.duplicated}">
                     <input matInput [(ngModel)]="claimCode.code" [readonly]="claimCode.readonly">
                 </mat-form-field>
                 <div style="padding-bottom: 0.5em; margin-right: 1em;" class="flex row">

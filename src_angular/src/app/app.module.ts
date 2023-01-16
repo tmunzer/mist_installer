@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 
 import { GoogleMapsModule } from '@angular/google-maps';
@@ -60,7 +59,6 @@ import { CommonComponent } from './common/common.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     GoogleMapsModule,
     HttpClientModule,
     HttpClientJsonpModule,

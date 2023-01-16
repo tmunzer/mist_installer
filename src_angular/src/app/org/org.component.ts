@@ -64,7 +64,7 @@ export class OrgComponent implements OnInit {
     } else {
     // parsing all the orgs/sites from the privileges
     // only orgs with admin/write/installer roles are used
-    if (this.self != {} && this.self["privileges"]) {
+    if (this.self["privileges"]) {
       this.self["privileges"].forEach(element => {
         if (element["role"] == "admin" || element["role"] == "write" || element["role"] == "installer") {
           if (element["scope"] == "org") {

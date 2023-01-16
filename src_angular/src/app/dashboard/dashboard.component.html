@@ -1,4 +1,4 @@
-<mat-card class="card-outer" class="flex column" style="padding-bottom: 0;padding-top: 0;height: calc(100vh - 64px);justify-content: space-between;">
+<mat-card class="card-outer flex column" style="padding-bottom: 0;padding-top: 0;height: calc(100vh - 64px);justify-content: space-between;">
 
     <div class="flex column" style="flex-grow: 1;justify-content: flex-start;">
         <div class="top-bar-container flex column">
@@ -35,7 +35,7 @@
         <div style="background-color: white; height: 100%;" class="flex column">
 
             <div class="flex row stretch" style="flex-grow: 1;">
-                <div fxFlex="30%" class="mat-elevation-z8 flex column">
+                <div class="mat-elevation-z8 flex column fxflex" style="max-width: 30%">
                     <div class="psk-table-container flex column">
                         <table mat-table [dataSource]="filteredDevicesDatase">
                             <ng-container matColumnDef="device">
@@ -68,7 +68,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="flex column space-between-end" fxFlex style="color: gray;">
+                                        <div class="flex column space-between-end fxflex" style="color: gray;">
                                             <div>{{element.mac}}</div>
                                             <div>Model: {{element.model}}</div>
                                         </div>
@@ -81,11 +81,11 @@
                         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"></mat-paginator>
                     </div>
                 </div>
-                <div fxFlex class="mat-elevation-z2 flex column center-stretch">
+                <div class="mat-elevation-z2 flex column center-stretch fxflex">
                     <div *ngIf="!editingDevice" style="text-align: center;font-size: large;color: gray;">
                         Please select a device...
                     </div>
-                    <div *ngIf="editingDevice" fxFlex class="flex column" style="margin:3em">
+                    <div *ngIf="editingDevice" class="flex column fxflex" style="margin:3em">
                         <div mat-dialog-content class="flex column">
                             <div class="flex row wrap space-between-stretch">
                                 <div class="flex column center-center" style="margin-bottom: 2em;">
