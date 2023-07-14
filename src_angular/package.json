@@ -27,7 +27,7 @@
         "leaflet": "^1.9.4",
         "org": "^0.2.0",
         "rxjs": "~6.6.0",
-        "tslib": "^2.4.1",
+        "tslib": "^2.5.3",
         "zone.js": "~0.13.1"
     },
     "devDependencies": {}
