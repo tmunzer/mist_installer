@@ -24,10 +24,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Claim new devices
 - Edit newly claimed devices settings
 - Assign newly claimed devices to Site/Floorplan
+- Enable/Disable "installer" mode on Mist Sites (requires Super Admin account)
 
 <img src="https://github.com/tmunzer/mist_claim_web_ui/raw/main/._readme/img/login.png"  width="45%"  />
 <img src="https://github.com/tmunzer/mist_claim_web_ui/raw/main/._readme/img/edit.png" width="45%"  />
 
+## Supported Mist account types
+- Super Admin
+- Network Admin
+- Installer
 
 ## Installation
 
